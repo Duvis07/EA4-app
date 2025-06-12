@@ -8,254 +8,297 @@ CASOSUSO = "Casos de uso ideales:"
 VER_DETALLES = "Ver detalles"
 
 def mostrar_caso_estudio():
-    st.markdown("<h1 style='font-size: 36px; color: #1a365d;'>Caso de estudio: Análisis de ventas minoristas con datos reales</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='font-size: 36px; color: #1a365d;'>Taller práctico: Analizando los datos en mapas</h1>", unsafe_allow_html=True)
     
     # Introducción
     st.markdown("<h2 style='font-size: 32px; color: #1a365d;'>Introducción</h2>", unsafe_allow_html=True)
     st.write("""
-    El análisis de datos de ventas minoristas es crucial para entender el comportamiento de los clientes, identificar productos exitosos y descubrir oportunidades de mejora en la gestión comercial. En este caso de estudio, trabajaremos con un dataset real de TechNova Retail que contiene información sobre ventas, productos, categorías, fechas y clientes. Utilizaremos diversas librerías de visualización de Python para extraer insights valiosos y apoyar la toma de decisiones estratégicas.
+    El análisis geoespacial es fundamental para entender patrones de ventas, comportamientos de clientes y optimizar 
+    estrategias comerciales basadas en ubicación. En este taller práctico, trabajamos con datos de ventas 
+    minoristas de una cadena multinacional para identificar patrones significativos a través de visualizaciones 
+    en mapas y otras técnicas analíticas.
     """)
     
     # Objetivos
     st.markdown("<h2 style='font-size: 32px; color: #1a365d;'>Objetivos</h2>", unsafe_allow_html=True)
     st.markdown("""
-    - Identificar patrones y tendencias en las ventas a lo largo del tiempo.
-    - Analizar la distribución de ventas por categorías de producto y por cliente.
-    - Detectar productos o categorías con mayor y menor desempeño.
-    - Explorar la relación entre variables como cantidad, precio y satisfacción del cliente.
-    - Proponer recomendaciones basadas en datos para mejorar la estrategia comercial de TechNova Retail.
+    - Analizar información espacial proveniente de datos reales de ventas minoristas.
+    - Crear mapas interactivos que representen patrones significativos de ventas por ubicación geográfica.
+    - Identificar tendencias regionales y comportamiento de clientes en diferentes países y ciudades.
+    - Evaluar correlaciones entre ubicación, satisfacción del cliente y volumen de ventas.
+    - Optimizar estrategias de ventas basadas en análisis geográfico de datos.
+    """)
+    
+    # Conjunto de datos
+    st.markdown("<h2 style='font-size: 32px; color: #1a365d;'>Conjunto de Datos</h2>", unsafe_allow_html=True)
+    st.write("""
+    El dataset "Ventas_Minoristas.xlsx" contiene información detallada sobre transacciones de una cadena minorista multinacional, incluyendo:
+    """)
+    
+    st.markdown("""
+    - **Productos vendidos**: Nombres y categorías
+    - **Precios y cantidades**: Precio unitario en USD y cantidad de unidades vendidas
+    - **Fechas de venta**: Registros temporales de cada transacción
+    - **Ubicación geográfica**: País y ciudad donde se realizó la venta
+    - **Método de pago**: Forma en que los clientes realizaron sus compras
+    - **Demografía del cliente**: Edad y género
+    - **Satisfacción del cliente**: Calificación de satisfacción en escala de 1-5
     """)
     
     # Investigación de herramientas
-    st.markdown("<h2 style='font-size: 32px; color: #1a365d;'>Investigación de librerías de visualización de datos</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='font-size: 32px; color: #1a365d;'>Investigación de herramientas de geovisualización</h2>", unsafe_allow_html=True)
     st.write("""
-    A continuación, se presenta una comparativa de cinco librerías populares de visualización de datos en Python: 
-    Matplotlib, Seaborn, Plotly, Bokeh y GeoPandas. Se analizan sus características principales, 
-    ventajas, desventajas y casos de uso ideales en el contexto de análisis de ventas minoristas.
+    Para este análisis, investigamos cinco herramientas de visualización geoespacial, evaluando sus características, ventajas y limitaciones 
+    para determinar cuál se adaptaba mejor a nuestros objetivos de análisis de ventas minoristas.
     """)
     
-    # Matplotlib
-    st.markdown("<h2 style='font-size: 24px; color: #1a365d;'>Librería 1: Matplotlib</h2>", unsafe_allow_html=True)
-    with st.expander("Ver detalles", expanded=True):
+    # Python (Plotly)
+    st.markdown("<h2 style='font-size: 24px; color: #1a365d;'>1. Python con Plotly</h2>", unsafe_allow_html=True)
+    with st.expander(VER_DETALLES, expanded=True):
         st.subheader(DESCRIPCION)
         st.write("""
-        Matplotlib es una librería de visualización de datos en Python que proporciona una amplia gama de gráficos estáticos, 
-        animados e interactivos. Es la base de muchas otras librerías de visualización y ofrece un control detallado sobre 
-        cada aspecto de los gráficos.
+        Plotly es una librería de Python que ofrece capacidades avanzadas de visualización geoespacial interactiva. 
+        Permite crear mapas coropléticos, mapas de burbujas y otras visualizaciones geográficas interactivas con 
+        relativa facilidad y alto nivel de personalización.
         """)
         
         st.subheader(VENTAJAS)
         st.markdown("""
-        - Gran flexibilidad y control sobre todos los aspectos de los gráficos.
-        - Amplia documentación y comunidad de usuarios.
-        - Compatible con muchos formatos de salida (PNG, PDF, SVG, etc.).
-        - Integración con bibliotecas numéricas como NumPy y Pandas.
-        - Capacidad para crear gráficos personalizados complejos.
+        - **Interactividad**: Creación de visualizaciones interactivas con funciones como zoom, hover y selección.
+        - **Variedad de tipos de mapas**: Coropléticos, burbujas, dispersión geográfica, mapas de calor.
+        - **Personalización**: Alto nivel de control sobre todos los aspectos visuales.
+        - **Integración con análisis de datos**: Trabaja perfectamente con pandas y otras librerías de análisis.
+        - **Exportación web**: Posibilidad de exportar visualizaciones para uso en aplicaciones web.
         """)
         
         st.subheader(DESVENTAJAS)
         st.markdown("""
-        - Sintaxis verbosa que requiere más código para visualizaciones básicas.
-        - Curva de aprendizaje pronunciada para usuarios principiantes.
-        - Gráficos estáticos por defecto (aunque se pueden hacer interactivos con extensiones).
-        - Estilo visual anticuado que requiere personalización para obtener resultados modernos.
+        - **Curva de aprendizaje**: Requiere conocimientos de programación en Python.
+        - **Configuración inicial**: Puede ser complejo configurar correctamente las dependencias.
+        - **Rendimiento**: Puede ralentizarse con conjuntos de datos muy grandes.
+        - **Manejo de errores**: A veces los mensajes de error no son intuitivos.
         """)
         
         st.subheader(CASOSUSO)
         st.markdown("""
-        - Visualizaciones científicas y académicas que requieren precisión y control detallado.
-        - Gráficos personalizados complejos que no están disponibles en otras librerías.
-        - Publicaciones y reportes que requieren gráficos de alta calidad en formatos específicos.
-        - Análisis exploratorio de datos cuando se necesita control total sobre la visualización.
+        - **Análisis exploratorio avanzado** de datos geoespaciales con múltiples dimensiones.
+        - **Dashboards interactivos** que requieren filtrado en tiempo real y exploración profunda.
+        - **Informes técnicos** que necesitan visualizaciones geoespaciales detalladas y personalizables.
+        - **Análisis comparativo** entre regiones con múltiples variables superpuestas.
         """)
     
-    # Seaborn
-    st.markdown("<h2 style='font-size: 24px; color: #1a365d;'>Librería 2: Seaborn</h2>", unsafe_allow_html=True)
-    with st.expander("Ver detalles"):
+    # Power BI
+    st.markdown("<h2 style='font-size: 24px; color: #1a365d;'>2. Power BI</h2>", unsafe_allow_html=True)
+    with st.expander(VER_DETALLES):
         st.subheader(DESCRIPCION)
         st.write("""
-        Seaborn es una librería de visualización de datos basada en Matplotlib que proporciona una interfaz de alto nivel 
-        para crear gráficos estadísticos atractivos e informativos. Está especialmente diseñada para trabajar con 
-        estructuras de datos de Pandas y facilita la creación de visualizaciones complejas con pocas líneas de código.
+        Power BI es una herramienta de Business Intelligence de Microsoft que ofrece capacidades integradas de 
+        visualización geoespacial. Permite crear mapas basados en ubicaciones geográficas con una interfaz intuitiva 
+        de arrastrar y soltar, facilitando el análisis de datos espaciales para usuarios empresariales.
         """)
         
         st.subheader(VENTAJAS)
         st.markdown("""
-        - Interfaz simplificada para crear gráficos estadísticos complejos.
-        - Temas y paletas de colores atractivos predefinidos.
-        - Integración perfecta con Pandas DataFrames.
-        - Funciones específicas para visualizar distribuciones y relaciones entre variables.
-        - Manejo automático de agrupaciones y agregaciones de datos.
+        - **Facilidad de uso**: Interfaz visual intuitiva que no requiere programación.
+        - **Integración empresarial**: Conexión directa con fuentes de datos corporativas.
+        - **Actualizaciones automáticas**: Capacidad para configurar actualizaciones programadas de datos.
+        - **Compartir y colaboración**: Fácil distribución de informes y dashboards dentro de organizaciones.
+        - **Complementos geoespaciales**: Visualizaciones específicas para mapas como ArcGIS.
         """)
         
         st.subheader(DESVENTAJAS)
         st.markdown("""
-        - Menos flexible que Matplotlib para personalizaciones muy específicas.
-        - Limitado a ciertos tipos de gráficos estadísticos.
-        - Puede ser lento con conjuntos de datos muy grandes.
-        - Gráficos estáticos sin capacidades interactivas nativas.
+        - **Personalización limitada**: Menos flexibilidad que soluciones basadas en código.
+        - **Licenciamiento**: Costos asociados para funcionalidades avanzadas y compartir.
+        - **Limitaciones de rendimiento**: Puede ralentizarse con conjuntos de datos muy grandes.
+        - **Opciones de mapas geoespaciales más básicas** que herramientas especializadas.
         """)
         
         st.subheader(CASOSUSO)
         st.markdown("""
-        - Análisis exploratorio de datos estadísticos.
-        - Visualización de distribuciones y relaciones entre variables.
-        - Creación rápida de gráficos estadísticos atractivos con poco código.
-        - Proyectos de ciencia de datos y análisis estadístico.
+        - **Dashboards ejecutivos** donde la facilidad de interpretación es prioritaria.
+        - **Informes corporativos recurrentes** que necesitan actualizaciones programadas.
+        - **Análisis geoespacial básico a intermedio** sin necesidad de programación.
+        - **Entornos empresariales** donde la integración con el ecosistema Microsoft es importante.
         """)
     
-    # Plotly
-    st.markdown("<h2 style='font-size: 24px; color: #1a365d;'>Librería 3: Plotly</h2>", unsafe_allow_html=True)
-    with st.expander("Ver detalles"):
+    # Tableau
+    st.markdown("<h2 style='font-size: 24px; color: #1a365d;'>3. Tableau</h2>", unsafe_allow_html=True)
+    with st.expander(VER_DETALLES):
         st.subheader(DESCRIPCION)
         st.write("""
-        Plotly es una librería de visualización de datos interactiva que permite crear gráficos dinámicos y dashboards 
-        interactivos. Utiliza JavaScript (a través de la biblioteca Plotly.js) para renderizar gráficos en navegadores web, 
-        lo que permite interacciones como zoom, pan, tooltips y selección de datos.
+        Tableau es una plataforma líder de visualización de datos con capacidades geoespaciales avanzadas. Ofrece 
+        herramientas específicas para mapeo que permiten crear visualizaciones geográficas sofisticadas con una 
+        interfaz intuitiva, combinando facilidad de uso y alto nivel de personalización.
         """)
         
         st.subheader(VENTAJAS)
         st.markdown("""
-        - Gráficos interactivos con capacidades de zoom, pan y tooltips.
-        - Amplia variedad de tipos de gráficos, incluidos 3D y mapas.
-        - Excelente integración con frameworks web como Dash y Streamlit.
-        - Exportación a formatos web interactivos (HTML, JSON).
-        - Estilo visual moderno y atractivo por defecto.
+        - **Capacidades geoespaciales nativas**: Funcionalidades de mapeo robustas integradas.
+        - **Geocodificación automática**: Conversión de ubicaciones a coordenadas geográficas.
+        - **Visualizaciones atractivas**: Mapas visualmente impactantes con poco esfuerzo.
+        - **Interactividad avanzada**: Filtros, drill-downs y tooltips sofisticados.
+        - **Facilidad de uso**: Interfaz intuitiva que equilibra poder y accesibilidad.
         """)
         
         st.subheader(DESVENTAJAS)
         st.markdown("""
-        - Mayor consumo de recursos que las librerías estáticas.
-        - Curva de aprendizaje moderada debido a la amplia gama de opciones.
-        - Puede ser lento con conjuntos de datos muy grandes debido a la interactividad.
-        - Algunas funcionalidades avanzadas requieren una suscripción de pago (Plotly Enterprise).
+        - **Costo**: Licenciamiento significativo para uso empresarial completo.
+        - **Curva de aprendizaje moderada**: Para funcionalidades avanzadas.
+        - **Personalización limitada**: Comparado con soluciones programáticas como Python.
+        - **Recursos computacionales**: Puede requerir hardware potente para conjuntos de datos grandes.
         """)
         
         st.subheader(CASOSUSO)
         st.markdown("""
-        - Dashboards interactivos y aplicaciones web de análisis de datos.
-        - Presentaciones y reportes interactivos para stakeholders.
-        - Exploración de datos complejos que se benefician de la interactividad.
-        - Visualizaciones que requieren interacción del usuario para descubrir patrones.
+        - **Análisis geoespacial avanzado** sin necesidad extensa de programación.
+        - **Visualizaciones interactivas** para presentaciones ejecutivas y públicas.
+        - **Dashboards comerciales** donde la estética y facilidad de comprensión son críticas.
+        - **Análisis de territorios de ventas** con varios niveles de granularidad geográfica.
         """)
     
-    # Bokeh
-    st.markdown("<h2 style='font-size: 24px; color: #1a365d;'>Librería 4: Bokeh</h2>", unsafe_allow_html=True)
-    with st.expander("Ver detalles"):
+    # QGIS
+    st.markdown("<h2 style='font-size: 24px; color: #1a365d;'>4. QGIS</h2>", unsafe_allow_html=True)
+    with st.expander(VER_DETALLES):
         st.subheader(DESCRIPCION)
         st.write("""
-        Bokeh es una librería de visualización interactiva centrada en la web que se enfoca en proporcionar elegantes 
-        gráficos interactivos para aplicaciones web y dashboards. Utiliza HTML5 Canvas y WebGL para renderizar gráficos 
-        de alto rendimiento directamente en el navegador.
+        QGIS es un sistema de información geográfica (SIG) de código abierto que proporciona herramientas avanzadas 
+        para el análisis y la visualización de datos espaciales. Está diseñado específicamente para trabajar con 
+        datos geográficos, ofreciendo capacidades sofisticadas de manejo de capas, proyecciones y análisis espacial.
         """)
         
         st.subheader(VENTAJAS)
         st.markdown("""
-        - Visualizaciones interactivas de alto rendimiento.
-        - Excelente para grandes conjuntos de datos gracias a su renderizado eficiente.
-        - Capacidad para crear aplicaciones web completas con su servidor integrado.
-        - Arquitectura modular que permite personalizaciones avanzadas.
-        - Buena integración con ecosistemas de datos como Pandas y NumPy.
+        - **Especializado en geografía**: Herramientas específicas para análisis espacial avanzado.
+        - **Código abierto y gratuito**: Sin costos de licenciamiento.
+        - **Extensible**: Numerosos complementos disponibles para funcionalidades específicas.
+        - **Formatos variados**: Compatibilidad con múltiples formatos de datos espaciales.
+        - **Análisis espacial avanzado**: Operaciones como buffer, intersección, y análisis de proximidad.
         """)
         
         st.subheader(DESVENTAJAS)
         st.markdown("""
-        - Sintaxis más compleja que otras librerías interactivas como Plotly.
-        - Documentación menos completa y accesible que Matplotlib o Plotly.
-        - Menos tipos de gráficos predefinidos que otras librerías.
-        - Curva de aprendizaje pronunciada para funcionalidades avanzadas.
+        - **Curva de aprendizaje pronunciada**: Requiere conocimientos específicos de SIG.
+        - **Menos orientado a business intelligence**: Enfocado en análisis geográfico más que en BI.
+        - **Interfaz menos intuitiva**: Comparado con herramientas orientadas a negocios.
+        - **Integración más complicada** con flujos de trabajo empresariales no espaciales.
         """)
         
         st.subheader(CASOSUSO)
         st.markdown("""
-        - Visualización de grandes conjuntos de datos que requieren interactividad.
-        - Aplicaciones web de análisis de datos personalizadas.
-        - Gráficos interactivos que necesitan alto rendimiento.
-        - Dashboards que requieren actualizaciones en tiempo real.
+        - **Análisis geoespacial profundo** que requiere operaciones espaciales avanzadas.
+        - **Creación de mapas cartográficos precisos** para reportes especializados.
+        - **Proyectos que requieren múltiples capas** de información geográfica.
+        - **Análisis de proximidad y territorios** para planificación de ubicaciones comerciales.
         """)
     
-    # GeoPandas
-    st.markdown("<h2 style='font-size: 24px; color: #1a365d;'>Librería 5: GeoPandas</h2>", unsafe_allow_html=True)
-    with st.expander("Ver detalles"):
+    # Looker Studio (anteriormente Data Studio)
+    st.markdown("<h2 style='font-size: 24px; color: #1a365d;'>5. Looker Studio</h2>", unsafe_allow_html=True)
+    with st.expander(VER_DETALLES):
         st.subheader(DESCRIPCION)
         st.write("""
-        GeoPandas es una extensión de Pandas que facilita el trabajo con datos geoespaciales en Python. Combina las 
-        capacidades de Pandas con herramientas para el análisis geoespacial, permitiendo operaciones espaciales en 
-        tipos de datos geométricos.
+        Looker Studio (anteriormente Google Data Studio) es una herramienta gratuita de visualización de datos en la nube 
+        que incluye capacidades para crear mapas y visualizaciones geoespaciales. Ofrece una plataforma accesible para 
+        crear dashboards interactivos con componentes geográficos, especialmente integrada con el ecosistema de Google.
         """)
         
         st.subheader(VENTAJAS)
         st.markdown("""
-        - Integra perfectamente análisis de datos y operaciones geoespaciales.
-        - Extiende DataFrames de Pandas con tipos de datos geométricos.
-        - Simplifica la creación de mapas y visualizaciones geoespaciales.
-        - Soporte para diferentes sistemas de coordenadas y proyecciones.
-        - Capacidad para realizar operaciones espaciales (intersección, unión, etc.).
+        - **Gratuito**: Accesible sin costo para funcionalidades básicas y avanzadas.
+        - **Basado en la nube**: No requiere instalación local ni mantenimiento.
+        - **Colaborativo**: Facilidad para compartir y trabajar en equipo en tiempo real.
+        - **Integración con Google**: Conexión nativa con fuentes de datos de Google.
+        - **Mapas de Google**: Utiliza la familiar interfaz de Google Maps.
         """)
         
         st.subheader(DESVENTAJAS)
         st.markdown("""
-        - Enfocado exclusivamente en datos geoespaciales.
-        - Requiere dependencias adicionales que pueden ser complicadas de instalar.
-        - Curva de aprendizaje pronunciada para usuarios sin experiencia en GIS.
-        - Rendimiento limitado con conjuntos de datos geoespaciales muy grandes.
+        - **Opciones de visualización geoespacial limitadas**: Menos tipos de mapas que herramientas especializadas.
+        - **Personalización restringida**: Menos opciones para personalizar visualizaciones avanzadas.
+        - **Dependencia de conexión a internet**: Requiere acceso web constante.
+        - **Limitaciones de rendimiento**: Puede ralentizarse con conjuntos de datos muy grandes.
         """)
         
         st.subheader(CASOSUSO)
         st.markdown("""
-        - Análisis y visualización de datos geoespaciales.
-        - Creación de mapas temáticos y coropléticos.
-        - Proyectos que combinan análisis de datos tradicionales con componentes geográficos.
-        - Visualización de datos estadísticos por regiones o áreas geográficas.
+        - **Informes geoespaciales rápidos** que requieren colaboración en equipo.
+        - **Dashboards compartidos públicamente** sin necesidad de licencias para los consumidores.
+        - **Visualización geoespacial básica** integrada con datos de Google Analytics o Sheets.
+        - **Proyectos con presupuesto limitado** que requieren capacidades de mapeo.
         """)
     
     # Justificación de la selección
-    st.markdown("<h2 style='font-size: 32px; color: #1a365d;'>Justificación de la selección de librerías</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='font-size: 32px; color: #1a365d;'>Justificación de la selección de herramientas</h2>", unsafe_allow_html=True)
     st.write("""
-    Para este caso de estudio sobre análisis de ventas minoristas, hemos seleccionado tres librerías principales: Matplotlib, Seaborn y Plotly. Cada una de estas librerías se utilizará para diferentes aspectos del análisis, aprovechando sus fortalezas específicas en el contexto comercial.
+    Para el análisis de ventas minoristas con componente geoespacial, seleccionamos **Python con Plotly** como nuestra herramienta principal, 
+    complementada con elementos de análisis estadístico utilizando pandas, matplotlib y seaborn. Esta combinación nos permite realizar 
+    un análisis integral de los patrones de ventas, incorporando visualizaciones geoespaciales interactivas con un alto nivel de personalización.
     """)
     
-    st.subheader("Objetivo 1: Análisis de tendencias de ventas a lo largo del tiempo")
-    st.write("""
-    Para analizar cómo evolucionan las ventas a lo largo de los meses o años, utilizamos Matplotlib debido a su precisión y control detallado sobre los gráficos de líneas. Esto nos permite visualizar claramente las tendencias temporales en métricas como ventas totales, ingresos y evolución de productos destacados.
+    st.subheader("Criterios de selección:")
+    st.markdown("""
+    1. **Complejidad de los datos:** El dataset contiene múltiples dimensiones (productos, ubicaciones, demografía, tiempo), lo que requiere 
+       una herramienta flexible como Python que puede manejar análisis multidimensional y preparación avanzada de datos.
+       
+    2. **Tipo de visualización requerida:** Necesitábamos crear mapas coropléticos por país y mapas de burbujas para ciudades, 
+       junto con visualizaciones estadísticas como boxplots y heatmaps que se integren en un análisis cohesivo. Plotly ofrece 
+       todas estas capacidades en un ecosistema unificado.
+       
+    3. **Interactividad:** Los mapas y gráficos interactivos permiten una exploración más profunda de los datos de ventas, 
+       algo que Plotly proporciona de manera nativa y que es crucial para descubrir patrones no evidentes inicialmente.
+       
+    4. **Integración con análisis estadístico:** La combinación de capacidades geoespaciales con herramientas de análisis 
+       estadístico es esencial para correlacionar ubicación con variables como satisfacción y volumen de ventas.
+       
+    5. **Escalabilidad:** Python permite automatizar el análisis para futuras actualizaciones de datos, haciendo el proceso sostenible.
     """)
     
-    st.subheader("Objetivo 2: Comparación entre categorías de producto")
+    st.subheader("Comparación con alternativas:")
     st.write("""
-    Para comparar el desempeño entre diferentes categorías de productos, Seaborn es la elección ideal gracias a sus capacidades estadísticas y facilidad para crear gráficos comparativos como barplots y boxplots. Su integración con Pandas facilita el análisis agrupado por categorías, ciudades o métodos de pago.
+    Aunque herramientas como Tableau o Power BI ofrecen interfaces más amigables, Python con Plotly proporciona mayor 
+    flexibilidad y personalización para crear exactamente las visualizaciones que necesitamos para este análisis 
+    específico de ventas minoristas con enfoque geoespacial. El código desarrollado también permite reproducibilidad 
+    y adaptación a futuros conjuntos de datos similares.
     """)
     
-    st.subheader("Objetivo 3: Análisis de correlaciones comerciales")
-    st.write("""
-    Para explorar relaciones entre variables como precio, cantidad vendida y satisfacción del cliente, utilizamos Plotly por sus capacidades interactivas. Esto permite explorar en detalle los datos y descubrir patrones complejos mediante gráficos de dispersión y mapas de calor interactivos.
-    """)
+    # Conclusiones
+    st.markdown("<h2 style='font-size: 32px; color: #1a365d;'>Conclusiones</h2>", unsafe_allow_html=True)
     
-    st.subheader("Objetivo 4: Dashboards y visualizaciones interactivas de ventas")
-    st.write("""
-    Para crear dashboards que combinen múltiples métricas y permitan una exploración interactiva profunda, Plotly es ideal. Su capacidad para manejar grandes volúmenes de datos y crear interfaces interactivas lo hace perfecto para dashboards comerciales y reportes ejecutivos.
-    """)
-
-    # Conclusión
-    st.markdown("<h2 style='font-size: 32px; color: #1a365d;'>Conclusión</h2>", unsafe_allow_html=True)
-    st.write("""
-    La combinación de estas librerías de visualización nos permite abordar de manera integral el análisis de ventas minoristas. Cada librería aporta sus fortalezas específicas:
+    st.markdown("""
+    <div class='insight-card'>
+    <p>El análisis geoespacial de los datos de ventas minoristas de TechNova Retail nos ha permitido identificar patrones 
+    y tendencias significativas que pueden guiar las decisiones estratégicas de la empresa:</p>
     
-    - **Matplotlib** proporciona control preciso para visualizar tendencias de ventas en el tiempo.
-    - **Seaborn** facilita la comparación estadística entre categorías, productos y clientes con visualizaciones elegantes.
-    - **Plotly** ofrece interactividad para explorar correlaciones y patrones complejos, además de permitir crear dashboards interactivos para un análisis comercial integral.
+    <h3>1. Patrones geográficos determinantes</h3>
+    <p>La visualización de datos en mapas ha revelado una clara disparidad en el comportamiento de ventas entre diferentes 
+    regiones geográficas. Los mapas coropléticos por país y los mapas de burbujas por ciudad nos han permitido identificar 
+    no solo dónde se concentra el mayor volumen de ventas, sino también dónde se encuentran las oportunidades de crecimiento 
+    con mayor potencial. Esta información es fundamental para decisiones de expansión, distribución de recursos y estrategias 
+    de marketing regionalizadas.</p>
     
-    Esta aproximación multi-librería nos permite aprovechar lo mejor de cada herramienta para obtener insights más completos y valiosos sobre el comportamiento de ventas, preferencias de los clientes y oportunidades de mejora para TechNova Retail.
-    """)
+    <h3>2. Correlación entre ubicación y comportamiento del cliente</h3>
+    <p>El análisis geoespacial ha evidenciado una fuerte correlación entre la ubicación geográfica y factores como la 
+    satisfacción del cliente, el ticket promedio y las preferencias de categorías de productos. Estas correlaciones permiten 
+    desarrollar estrategias personalizadas por región, optimizando el surtido de productos, los precios y las campañas 
+    promocionales según las características específicas de cada mercado. La combinación de visualizaciones geoespaciales 
+    con análisis demográficos ha sido especialmente valiosa para segmentar mercados de manera efectiva.</p>
+    
+    <p>La herramienta seleccionada, Python con Plotly, ha demostrado ser la opción más adecuada para este análisis al 
+    permitir la creación de visualizaciones interactivas, personalizables y con múltiples capas de información que facilitan 
+    la identificación de patrones complejos y la comunicación efectiva de los hallazgos. La capacidad para combinar 
+    diferentes tipos de visualizaciones y análisis estadísticos en un flujo de trabajo unificado resultó ser determinante 
+    para la profundidad del análisis obtenido.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
     # Referencias bibliográficas
     st.markdown("""
     <h2 style='font-size: 28px; color: #1a365d; margin-top:32px;'>Referencias bibliográficas</h2>
     <ul style='font-size:18px;'>
-        <li><b>Hunter, J. D. (2007).</b> Matplotlib: A 2D Graphics Environment. <i>Computing in Science & Engineering</i>, 9(3), 90-95. <a href='https://matplotlib.org/' target='_blank'>https://matplotlib.org/</a></li>
-        <li><b>Waskom, M. L. (2021).</b> Seaborn: Statistical Data Visualization. <i>Journal of Open Source Software</i>, 6(60), 3021. <a href='https://seaborn.pydata.org/' target='_blank'>https://seaborn.pydata.org/</a></li>
-        <li><b>Plotly Technologies Inc. (2015).</b> Collaborative data science. <a href='https://plotly.com/python/' target='_blank'>https://plotly.com/python/</a></li>
-        <li><b>Bokeh Development Team. (2018).</b> Bokeh: Python library for interactive visualization. <a href='https://bokeh.org/' target='_blank'>https://bokeh.org/</a></li>
-        <li><b>Jordahl, K., et al. (2020).</b> GeoPandas: Python tools for geographic data. <a href='https://geopandas.org/' target='_blank'>https://geopandas.org/</a></li>
-        <li><b>McKinney, W. (2010).</b> Data Structures for Statistical Computing in Python. <i>Proceedings of the 9th Python in Science Conference</i>, 51-56. <a href='https://pandas.pydata.org/' target='_blank'>https://pandas.pydata.org/</a></li>
+        <li><b>Plotly Technologies Inc. (2023).</b> Plotly: The front end for ML and data science models. <a href='https://plotly.com/python/' target='_blank'>https://plotly.com/python/</a></li>
+        <li><b>McKinney, W. (2010).</b> Data Structures for Statistical Computing in Python. <i>Proceedings of the 9th Python in Science Conference</i>, 51-56.</li>
+        <li><b>Jordahl, K. (2022).</b> GeoPandas: Python tools for geographic data. <a href='https://geopandas.org/' target='_blank'>https://geopandas.org/</a></li>
+        <li><b>Rey, S. J., & Arribas-Bel, D. (2022).</b> Geographic Data Science with Python. <i>CRC Press</i>.</li>
+        <li><b>Robinson, A. C., et al. (2017).</b> Geospatial Big Data and Cartography: Research Challenges and Opportunities for Making Maps That Matter. <i>International Journal of Cartography</i>, 3(sup1), 32-60.</li>
     </ul>
     """, unsafe_allow_html=True)

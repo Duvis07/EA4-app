@@ -76,15 +76,11 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- Modificación: Mostrar pestañas "Caso de estudio" y "Análisis estratégico" (ocultar "Visualizaciones de ventas") ---
-tabs = st.tabs(["Caso de estudio", "Análisis estratégico"])  # Cambio de nombre de la tercera pestaña
+tabs = st.tabs(["Caso de estudio", "Visualizaciones Análisis estratégico"])  # Cambio de nombre de la tercera pestaña
 
 with tabs[0]:
     if mostrar_caso_estudio:
         st.markdown("""
-        <div class='insight-card'>
-        <h2>Análisis de Datos para la Optimización de Estrategia Comercial</h2>
-        <p>Explora el caso de estudio y descubre cómo se puede aplicar el análisis de ventas en un escenario real.</p>
-        </div>
         """, unsafe_allow_html=True)
         mostrar_caso_estudio()
         # Solo texto y conclusiones, nunca gráficos ni insights de ventas
@@ -148,32 +144,6 @@ def load_data():
 
 df = load_data()
 
-# Mostrar la tarjeta de métricas con el conteo de registros
-st.markdown(f"""
-<div style="
-    max-width: 240px;
-    margin: 22px auto 18px auto;
-    background: linear-gradient(90deg, #e0e7ff 0%, #f8fafc 100%);
-    box-shadow: 0 3px 12px rgba(76, 110, 245, 0.10), 0 0.5px 2px rgba(44, 82, 130, 0.07);
-    border-radius: 13px;
-    padding: 13px 16px 12px 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border-left: 5px solid #4a86e8;
-    border-right: 1.5px solid #e2e8f0;
-">
-    <div style="font-size: 27px; color: #4a86e8; margin-bottom: 3px; font-weight: 900; letter-spacing: -1px;">📈</div>
-    <div style="font-size: 22px; font-weight: 900; color: #1a365d; letter-spacing: -0.5px; line-height: 1;">
-        {len(df):,}
-    </div>
-    <div style="font-size: 13px; color: #2c5282; margin-top: 1px; font-weight: 600; letter-spacing: 0.2px;">
-        registros analizados
-    </div>
-    <div style="font-size:11px; color:#4a5568; margin-top: 2px; text-align:center;">
-        <span style='font-style:italic;'>Filas procesadas</span>
-    </div>
-</div>
-""", unsafe_allow_html=True)
+
 
 
