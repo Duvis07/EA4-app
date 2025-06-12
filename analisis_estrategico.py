@@ -190,7 +190,7 @@ def mostrar_analisis_estrategico():
     </div>
     """, unsafe_allow_html=True)
     
-    # Filtro de países - Con estilo mejorado
+    # Filtro de países - Simplificado y estandarizado
     st.sidebar.markdown("""
     <div style="background-color: #f8fafc; padding: 10px 15px 5px; border-radius: 8px; margin-bottom: 15px; 
     border-left: 3px solid #4a86e8; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
@@ -199,18 +199,21 @@ def mostrar_analisis_estrategico():
         </h3>
     </div>
     """, unsafe_allow_html=True)
-    
-    paises_con_ropa = df[df["categoria"] == "ropa"]["pais"].unique().tolist()
 
+    # Obtener lista de países con datos
     paises_disponibles = sorted(df["pais"].unique())
+
+    # Selección por defecto - todos los países
     default_paises = paises_disponibles  # Por defecto seleccionar todos los países
+
+    # Multiselect simple, igual que las otras categorías
     paises_seleccionados = st.sidebar.multiselect(
         "Seleccione uno o varios países",
         options=paises_disponibles,
-        default=default_paises,  # Seleccionar todos por defecto para incluir los países con ropa
+        default=default_paises,
         key="paises_filter"
     )
-    
+
     # Si no se selecciona ningún país, usar TODOS los países
     if not paises_seleccionados:
         paises_seleccionados = paises_disponibles.copy()
@@ -267,23 +270,15 @@ def mostrar_analisis_estrategico():
     # Aplicar filtros automáticamente
     df_filtrado = df.copy()
     
-    # Aplicar filtro de países - asegurándonos de incluir países con la categoría ropa
+    # Aplicar filtro de países - sin lógica especial para ropa
     if paises_seleccionados:
-        # Verificar si hay países que tienen productos de ropa
-        paises_con_ropa_faltantes = [p for p in paises_con_ropa if p not in paises_seleccionados]
-        
-        # Si faltan países con ropa, añadirlos a la selección y notificar
-        if paises_con_ropa_faltantes:
-            paises_seleccionados_completo = paises_seleccionados + paises_con_ropa_faltantes
-            st.warning(f"Se han añadido automáticamente países que tienen productos de ropa: {', '.join(paises_con_ropa_faltantes)}")
-            df_filtrado = df_filtrado[df_filtrado["pais"].isin(paises_seleccionados_completo)]
-        else:
-            df_filtrado = df_filtrado[df_filtrado["pais"].isin(paises_seleccionados)]
+        df_filtrado = df_filtrado[df_filtrado["pais"].isin(paises_seleccionados)]
     
-    # Aplicar filtro de categorías solo si no están todas seleccionadas
-    if categorias_seleccionadas and len(categorias_seleccionadas) < len(categorias_disponibles):
+
+    # AGREGADA ESTA SECCIÓN QUE FALTABA
+    # Aplicar filtro de categorías
+    if categorias_seleccionadas:
         df_filtrado = df_filtrado[df_filtrado["categoria"].isin(categorias_seleccionadas)]
-    
 
     df_filtrado = df_filtrado[(df_filtrado["fecha"].dt.date >= fecha_inicio) & 
                             (df_filtrado["fecha"].dt.date <= fecha_fin)]
@@ -350,50 +345,33 @@ def mostrar_analisis_estrategico():
     # 1. Gráfico de Barras Apiladas mejorado: Ventas por categoría desglosado por método de pago
     st.markdown("<h2 style='text-align:center; color:#1a365d; margin-bottom:20px; font-weight:700; font-size:28px; font-family:Arial, sans-serif;'>Ventas por Categoría y Método de Pago</h2>", unsafe_allow_html=True)
     
-    # Asegurarnos de que todas las categorías (incluyendo "ropa") estén en el gráfico
-    # incluso si no tienen datos en los filtros actuales
-    todas_categorias_originales = sorted(df["categoria"].unique())
+    # MODIFICADO: Usar solo las categorías filtradas, no todas las categorías originales
     todos_metodos = sorted(df_filtrado["metodo_pago"].unique())
-    
-    # Verificar cuáles categorías faltan en los datos filtrados
-    categorias_filtradas = set(df_filtrado["categoria"].unique())
-    categorias_faltantes = set(todas_categorias_originales) - categorias_filtradas
-    
+    categorias_filtradas = sorted(df_filtrado["categoria"].unique())
 
-    # Crear combinaciones completas con TODAS las categorías originales
+    # MODIFICADO: Crear combinaciones solo con las categorías filtradas
     from itertools import product
-    todas_combinaciones = pd.DataFrame(
-        list(product(todas_categorias_originales, todos_metodos)),
+    combinaciones_filtradas = pd.DataFrame(
+        list(product(categorias_filtradas, todos_metodos)),
         columns=['categoria', 'metodo_pago']
     )
     
     # Hacer groupby con los datos filtrados
     ventas_cat_pago_raw = df_filtrado.groupby(['categoria', 'metodo_pago'])['ventas'].sum().reset_index()
     
-    # Hacer merge para incluir todas las categorías originales
-    ventas_cat_pago = todas_combinaciones.merge(
+    # Hacer merge solo con las categorías filtradas
+    ventas_cat_pago = combinaciones_filtradas.merge(
         ventas_cat_pago_raw, 
         on=['categoria', 'metodo_pago'], 
         how='left'
     ).fillna(0)
     
-    # Mensaje específico sobre la categoría ropa
-    if 'ropa' in todas_categorias_originales and 'ropa' not in categorias_filtradas:
-        # Encontrar los países que tienen productos de la categoría ropa
-        paises_ropa = df[df['categoria'] == 'ropa']['pais'].unique()
-        
-        st.info(f"""
-        La categoría 'ropa' existe en los datos originales pero no tiene registros en los filtros actuales.
-        Los productos de ropa solo están disponibles en los siguientes países: {', '.join(paises_ropa)}.
-        Para ver datos de ropa, asegúrate de incluir estos países en tu selección.
-        """)
-
-    # Ordenar categorías por ventas totales
+    # Ordenar categorías filtradas por ventas totales
     cat_totals = ventas_cat_pago.groupby('categoria')['ventas'].sum().sort_values(ascending=False)
     cat_order = cat_totals.index.tolist()
     
 
-    # Crear gráfico con manejo mejorado de categorías
+    # Crear gráfico solo con categorías filtradas
     fig_barras = px.bar(
         ventas_cat_pago,
         x='categoria',
@@ -1189,15 +1167,29 @@ def mostrar_analisis_estrategico():
     if not ventas_ciudad.empty:
         ciudad_mas_ventas = ventas_ciudad.loc[ventas_ciudad['ventas'].idxmax()]
         
-        # Calcular concentración de ventas (% que representan las top 3 ciudades)
-        top3_ciudades = ventas_ciudad.nlargest(3, 'ventas')
+        # Calcular concentración de ventas para las ciudades disponibles (hasta 3)
+        num_ciudades = min(3, len(ventas_ciudad))
+        top_ciudades = ventas_ciudad.nlargest(num_ciudades, 'ventas')
         total_ventas_ciudades = ventas_ciudad['ventas'].sum()
-        concentracion_top3 = (top3_ciudades['ventas'].sum() / total_ventas_ciudades) * 100
+        concentracion_top = (top_ciudades['ventas'].sum() / total_ventas_ciudades) * 100
         
-        # Crear cadenas de texto formateadas para las top 3 ciudades
-        ciudad1 = f"{top3_ciudades.iloc[0]['ciudad'].title()} ({top3_ciudades.iloc[0]['pais']}): ${top3_ciudades.iloc[0]['ventas']:,.2f}"
-        ciudad2 = f"{top3_ciudades.iloc[1]['ciudad'].title()} ({top3_ciudades.iloc[1]['pais']}): ${top3_ciudades.iloc[1]['ventas']:,.2f}"
-        ciudad3 = f"{top3_ciudades.iloc[2]['ciudad'].title()} ({top3_ciudades.iloc[2]['pais']}): ${top3_ciudades.iloc[2]['ventas']:,.2f}"
+        # Generar HTML para las ciudades disponibles
+        ciudades_html = ""
+        for i in range(num_ciudades):
+            ciudad_info = top_ciudades.iloc[i]
+            ciudad_text = f"{ciudad_info['ciudad'].title()} ({ciudad_info['pais']}): ${ciudad_info['ventas']:,.2f}"
+            ciudades_html += f"<li><b>{ciudad_text}</b></li>"
+        
+        # Determinar mensaje según la cantidad de ciudades
+        if num_ciudades > 1:
+            mensaje = f"Estas {num_ciudades} ciudades representan el <b>{concentracion_top:.1f}%</b> del total de ventas"
+            if concentracion_top > 50:
+                recomendacion = "Diversificar la presencia en más ciudades para reducir la dependencia geográfica."
+            else:
+                recomendacion = "Mantener la estrategia actual de distribución mientras se fortalecen los mercados clave."
+        else:
+            mensaje = "Esta ciudad representa el 100% de las ventas analizadas con los filtros actuales."
+            recomendacion = "Considerar expandir a más ubicaciones para diversificar el mercado."
         
         st.markdown(f"""
         <div class='insight-card'>
@@ -1205,21 +1197,13 @@ def mostrar_analisis_estrategico():
         <p>La ciudad con mayor volumen de ventas es <b>{ciudad_mas_ventas['ciudad'].title()}</b> en <b>{ciudad_mas_ventas['pais']}</b> 
         con <b>${ciudad_mas_ventas['ventas']:,.2f}</b>.</p>
         
-        <p><b>Top 3 ciudades por ventas:</b></p>
+        <p><b>Top {num_ciudades} ciudades por ventas:</b></p>
         <ol style="margin-top: 0; padding-left: 20px;">
-            <li><b>{ciudad1}</b></li>
-            <li><b>{ciudad2}</b></li>
-            <li><b>{ciudad3}</b></li>
+            {ciudades_html}
         </ol>
         
-        <p>Estas ciudades representan el <b>{concentracion_top3:.1f}%</b> del total de ventas, {
-        'indicando una alta concentración geográfica' if concentracion_top3 > 50 else 'mostrando una distribución relativamente equilibrada'} 
-        del negocio.</p>
-        
-        <p><b>Recomendación:</b> {
-        'Diversificar la presencia en más ciudades para reducir la dependencia geográfica y minimizar riesgos regionales. Considerar expandir a ciudades secundarias con perfiles demográficos similares a las actuales líderes.' if concentracion_top3 > 50 
-        else 'Mantener la estrategia actual de distribución geográfica mientras se fortalecen los mercados clave'
-        }</p>
+        <p>{mensaje}.</p>
+        <p><b>Recomendación:</b> {recomendacion}</p>
         </div>
         """, unsafe_allow_html=True)
     else:
@@ -1426,10 +1410,11 @@ def metric_card(title, value, delta, icon, color):
         border-left: 5px solid {color};
         margin-bottom: 15px;
         transition: transform 0.3s ease;
+        font-family: Arial, sans-serif;
     ">
         <div style="font-size: 40px; margin-bottom: 10px;">{icon}</div>
-        <h3 style="margin:0; color: #1a365d; font-size: 15px; font-weight: 600;">{title}</h3>
-        <p style="font-size: 28px; font-weight: 700; color: {color}; margin: 10px 0 5px 0;">{value}</p>
-        <span style="font-size: 13px; color: #595959; font-style: italic;">{delta}</span>
+        <h3 style="margin:0; color: #1a365d; font-size: 15px; font-weight: 700; font-family: Arial, sans-serif;">{title}</h3>
+        <p style="font-size: 28px; font-weight: 700; color: {color}; margin: 10px 0 5px 0; font-family: Arial, sans-serif;">{value}</p>
+        <span style="font-size: 13px; color: #595959; font-style: italic; font-family: Arial, sans-serif;">{delta}</span>
     </div>
     """, unsafe_allow_html=True)
