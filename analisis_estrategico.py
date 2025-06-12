@@ -307,7 +307,7 @@ def mostrar_analisis_estrategico():
     """, unsafe_allow_html=True)
 
     # 1. Gráfico de Barras Apiladas mejorado: Ventas por categoría desglosado por método de pago
-    st.markdown("<h3 style='text-align:center; color:#1a365d; margin-bottom:20px; font-weight:800;'>Ventas por Categoría y Método de Pago</h3>", unsafe_allow_html=True)
+   
     
     # Asegurarnos de que todas las categorías (incluyendo "ropa") estén en el gráfico
     # incluso si no tienen datos en los filtros actuales
@@ -462,8 +462,7 @@ def mostrar_analisis_estrategico():
     """, unsafe_allow_html=True)
     
     # 2. Heatmap mejorado: Correlación entre variables clave
-    st.markdown("<h3 style='text-align:center; color:#1a365d; margin-bottom:20px; margin-top:40px; font-weight:800;'>Correlación entre Variables Clave</h3>", unsafe_allow_html=True)
-    
+
     # Seleccionar columnas numéricas para correlación
     cols_disponibles = ['edad_cliente', 'cantidad', 'precio_unitario_usd', 'ventas', 'satisfaccion']
     
@@ -568,7 +567,6 @@ def mostrar_analisis_estrategico():
         st.warning("No hay suficientes columnas numéricas para calcular correlaciones.")
 
     # 3. Boxplot mejorado: Comparar distribución de precios por categoría
-    st.markdown("<h3 style='text-align:center; color:#1a365d; margin-bottom:20px; margin-top:40px; font-weight:800;'>Distribución de Precios por Categoría</h3>", unsafe_allow_html=True)
     
     # Ordenar categorías por precio mediano para mejor visualización
     cat_median = df_filtrado.groupby('categoria')['precio_unitario_usd'].median().sort_values(ascending=False)
@@ -703,7 +701,6 @@ def mostrar_analisis_estrategico():
     """, unsafe_allow_html=True)
     
     # 4. Gráfico de Líneas interactivo: Evolución de satisfacción
-    st.markdown("<h3 style='text-align:center; color:#1a365d; margin-bottom:20px; margin-top:40px; font-weight:800;'>Evolución de la Satisfacción del Cliente</h3>", unsafe_allow_html=True)
     
     if 'satisfaccion' in df_filtrado.columns:
         # Calcular satisfacción promedio por mes-año
@@ -905,7 +902,6 @@ def mostrar_analisis_estrategico():
         st.write("")
 
     # 5. Mapa Coroplético Interactivo: Ventas totales por país
-    st.markdown("<h3 style='text-align:center; color:#1a365d; margin-bottom:20px; margin-top:40px; font-weight:800;'>Distribución Geográfica de Ventas</h3>", unsafe_allow_html=True)
     
     ventas_pais = df_filtrado.groupby('pais')['ventas'].sum().reset_index()
     
@@ -1178,7 +1174,6 @@ def mostrar_analisis_estrategico():
         st.info("No hay datos suficientes de ciudades para generar insights geoespaciales detallados.")
 
     # 7. Segmentación de mercado mejorada: Visualización interactiva
-    st.markdown("<h3 style='text-align:center; color:#1a365d; margin-bottom:20px; margin-top:40px; font-weight:800;'>Segmentación de Mercado</h3>", unsafe_allow_html=True)
     
     # Añadimos el código para una sección básica de segmentación de mercado
     if 'rango_edad' in df_filtrado.columns and 'genero_cliente' in df_filtrado.columns:
