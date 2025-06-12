@@ -726,17 +726,70 @@ def mostrar_analisis_estrategico():
     st.plotly_chart(fig_boxplot, use_container_width=True)
     
     # Insight para boxplot
+    # Cálculo dinámico de estadísticas por categoría con mejor separación de variables
     precio_stats = df_filtrado.groupby('categoria')['precio_unitario_usd'].agg(['median', 'mean', 'std', 'min', 'max'])
     categoria_mas_cara = precio_stats['median'].idxmax()
+    categoria_mas_barata = precio_stats['median'].idxmin()
     categoria_mas_variada = precio_stats['std'].idxmax()
-    
+
+    # Si tenemos 3 categorías, asegurémonos de mostrar las tres
+    todas_categorias = sorted(precio_stats.index)
+    categoria_media = None
+
+    if len(todas_categorias) == 3:
+        # Identificar la categoría que no es ni la más cara ni la más barata
+        for cat in todas_categorias:
+            if cat != categoria_mas_cara and cat != categoria_mas_barata:
+                categoria_media = cat
+                break
+
+    # Crear texto de comparación más informativo evitando repeticiones
+    comparacion_texto = ""
+    if categoria_mas_cara != categoria_mas_variada:
+        comparacion_texto = f"La categoría <b>{categoria_mas_cara.title()}</b> tiene el precio mediano más alto (${precio_stats.loc[categoria_mas_cara, 'median']:.2f}), " + \
+                          f"mientras que <b>{categoria_mas_variada.title()}</b> muestra la mayor variabilidad de precios " + \
+                          f"(desviación estándar de ${precio_stats.loc[categoria_mas_variada, 'std']:.2f})."
+    else:
+        # Encontrar la segunda categoría con mayor variabilidad para evitar redundancia
+        segunda_mas_variada = precio_stats['std'].nlargest(2).index[1] if len(precio_stats) > 1 else None
+        
+        comparacion_texto = f"La categoría <b>{categoria_mas_cara.title()}</b> tiene el precio mediano más alto (${precio_stats.loc[categoria_mas_cara, 'median']:.2f}). "
+        
+        if segunda_mas_variada:
+            comparacion_texto += f"Además, muestra la mayor variabilidad de precios (desv. estándar de ${precio_stats.loc[categoria_mas_cara, 'std']:.2f}), " + \
+                              f"seguida por <b>{segunda_mas_variada.title()}</b> (desv. estándar de ${precio_stats.loc[segunda_mas_variada, 'std']:.2f})."
+        else:
+            comparacion_texto += f"También muestra la mayor variabilidad de precios (desv. estándar de ${precio_stats.loc[categoria_mas_cara, 'std']:.2f})."
+
+    # Añadir comparación con la categoría más barata
+    rango_precios = f"El rango de precios va desde <b>{categoria_mas_barata.title()}</b> (${precio_stats.loc[categoria_mas_barata, 'median']:.2f}) " + \
+                    f"hasta <b>{categoria_mas_cara.title()}</b> (${precio_stats.loc[categoria_mas_cara, 'median']:.2f}), " + \
+                    f"una diferencia de ${precio_stats.loc[categoria_mas_cara, 'median'] - precio_stats.loc[categoria_mas_barata, 'median']:.2f}."
+
+    # Construir recomendaciones para todas las categorías disponibles sin redundancia
+    recomendaciones_html = "<ul>"
+
+    # Siempre incluimos recomendaciones para la más cara y la más barata
+    recomendaciones_html += f"<li>Para <b>{categoria_mas_cara.title()}</b>: Enfatizar la calidad y exclusividad para justificar los precios más altos.</li>"
+    recomendaciones_html += f"<li>Para <b>{categoria_mas_barata.title()}</b>: Utilizar estrategias de volumen y ofertas para maximizar ventas.</li>"
+
+    # Si la categoría más variada no es ni la más cara ni la más barata, incluirla
+    if categoria_mas_variada != categoria_mas_cara and categoria_mas_variada != categoria_mas_barata:
+        recomendaciones_html += f"<li>Para <b>{categoria_mas_variada.title()}</b>: Segmentar líneas de productos por nivel de precio para diferentes segmentos de mercado.</li>"
+    # Si tenemos una categoría media identificada y no la hemos incluido aún
+    elif categoria_media and categoria_media != categoria_mas_variada:
+        recomendaciones_html += f"<li>Para <b>{categoria_media.title()}</b>: Balancear calidad y precio para posicionarse en el segmento medio del mercado.</li>"
+
+    recomendaciones_html += "</ul>"
+
     st.markdown(f"""
     <div class='insight-card'>
     <h3>Insight: Estrategia de Precios</h3>
-    <p>La categoría <b>{categoria_mas_cara.title()}</b> tiene el precio mediano más alto (${precio_stats.loc[categoria_mas_cara, 'median']:.2f}), 
-    mientras que <b>{categoria_mas_variada.title()}</b> muestra la mayor variabilidad de precios 
-    (desviación estándar de ${precio_stats.loc[categoria_mas_variada, 'std']:.2f}).</p>
-    <p>Esta información puede guiar estrategias de precios diferenciadas y promociones específicas por categoría.</p>
+    <p>{comparacion_texto}</p>
+    <p>{rango_precios}</p>
+    <p><b>Recomendaciones:</b>
+    {recomendaciones_html}
+    </p>
     </div>
     """, unsafe_allow_html=True)
     
