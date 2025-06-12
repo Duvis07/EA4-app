@@ -480,12 +480,48 @@ def mostrar_analisis_estrategico():
     
     cat_principal = ventas_cat_pago.groupby('categoria')['ventas'].sum().idxmax()
     
+    # Obtener segundo método de pago más popular
+    metodos_ventas = ventas_cat_pago.groupby('metodo_pago')['ventas'].sum().sort_values(ascending=False)
+    segundo_metodo = metodos_ventas.index[1] if len(metodos_ventas) > 1 else None
+    porcentaje_segundo = (metodos_ventas[1] / metodos_ventas.sum() * 100) if len(metodos_ventas) > 1 else 0
+    
+    # Calcular crecimiento del método principal vs año anterior si hay datos temporales
+    tendencia_texto = ""
+    if 'fecha' in df_filtrado.columns:
+        df_actual = df_filtrado[df_filtrado['fecha'] >= (df_filtrado['fecha'].max() - pd.Timedelta(days=180))]
+        df_anterior = df_filtrado[df_filtrado['fecha'] < (df_filtrado['fecha'].max() - pd.Timedelta(days=180))]
+        
+        if not df_anterior.empty and not df_actual.empty:
+            # Calcular porcentaje actual
+            pct_actual = (df_actual[df_actual['metodo_pago'] == metodo_principal]['ventas'].sum() / 
+                        df_actual['ventas'].sum() * 100)
+            
+            # Calcular porcentaje anterior
+            pct_anterior = (df_anterior[df_anterior['metodo_pago'] == metodo_principal]['ventas'].sum() / 
+                          df_anterior['ventas'].sum() * 100) if df_anterior['ventas'].sum() > 0 else 0
+            
+            # Calcular diferencia
+            if pct_anterior > 0:
+                diff = pct_actual - pct_anterior
+                tendencia_texto = f" Ha {('aumentado' if diff > 0 else 'disminuido')} un <b>{abs(diff):.1f}%</b> respecto al período anterior."
+    
     st.markdown(f"""
     <div class='insight-card'>
     <h3>Insight: Preferencias de Pago</h3>
     <p>El método de pago preferido es <b>{metodo_principal.title()}</b>, representando el <b>{porcentaje_principal:.1f}%</b> 
-    del total de ventas. La categoría con mayor volumen de ventas es <b>{cat_principal.title()}</b>.</p>
-    <p>Esta información es crucial para optimizar los canales de pago y promociones específicas por categoría.</p>
+    del total de ventas.{f" Le sigue <b>{segundo_metodo.title()}</b> con un <b>{porcentaje_segundo:.1f}%</b>." if segundo_metodo else ""}{tendencia_texto}</p>
+    
+    <p>La categoría con mayor volumen de ventas es <b>{cat_principal.title()}</b>, y muestra una preferencia de pago mediante 
+    <b>{ventas_cat_pago[(ventas_cat_pago['categoria'] == cat_principal)].groupby('metodo_pago')['ventas'].sum().idxmax().title()}</b>.</p>
+    
+    <p><b>Implicaciones estratégicas:</b></p>
+    <ul>
+        <li>Optimizar la experiencia de <b>{metodo_principal.title()}</b> para agilizar el proceso de compra.</li>
+        <li>Considerar promociones especiales para impulsar métodos de pago alternativos como 
+        {segundo_metodo.title() if segundo_metodo else "tarjetas de crédito"}.</li>
+        <li>Desarrollar campañas específicas que vinculen la categoría <b>{cat_principal.title()}</b> con 
+        beneficios exclusivos según el método de pago.</li>
+    </ul>
     </div>
     """, unsafe_allow_html=True)
     
