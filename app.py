@@ -35,7 +35,7 @@ st.markdown("""
     .stTabs [data-baseweb="tab"] {
         background-color: #e6f2ff; 
         border-radius: 6px; 
-        padding: 14px 24px;  /* Padding aumentado */
+        padding: 14px 24px  /* Padding aumentado */
         font-size: 18px;     /* Tamaño de fuente aumentado */
         font-weight: 500;    /* Peso de fuente aumentado */
     }
@@ -70,6 +70,16 @@ st.markdown("""
         border-radius: 8px;
         margin-top: 30px;
         border-top: 2px solid #e2e8f0;
+    }
+
+    /* Asegurar que el título principal use Arial */
+    .main h1 {
+        font-family: Arial, sans-serif !important;
+    }
+    
+    /* Asegurar que los widgets de Streamlit también usen Arial */
+    .stMarkdown, .stButton, .stSelectbox, .stRadio, .stCheckbox, .stSlider, .stText, .stDateInput {
+        font-family: Arial, sans-serif !important;
     }
 </style>
 """, unsafe_allow_html=True)
