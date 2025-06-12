@@ -10,6 +10,47 @@ from datetime import datetime
 from plotly.subplots import make_subplots
 
 def mostrar_analisis_estrategico():
+    # Definir constantes para estandarizar estilos de fuente
+    TITLE_FONT = dict(size=24, color='#1a365d', family='Arial', weight='bold')
+    SUBTITLE_FONT = dict(size=20, color='#2c5282', family='Arial', weight='bold')
+    AXIS_TITLE_FONT = dict(size=16, color='#2c5282', family='Arial', weight='bold')
+    LABEL_FONT = dict(size=14, color='#2d3748', family='Arial')
+    LEGEND_FONT = dict(size=14, color='#2c5282', family='Arial')
+    ANNOTATION_FONT = dict(size=14, color='#1a365d', family='Arial', weight='bold')
+    ACCENT_COLOR = '#4a86e8'
+    
+    # Estilo CSS para insights
+    INSIGHT_STYLE = """
+    <style>
+    .insight-card {
+        font-family: Arial, sans-serif;
+        background-color: #f8fafc;
+        padding: 20px;
+        border-radius: 10px;
+        border-left: 5px solid #4a86e8;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .insight-card h3 {
+        color: #1a365d;
+        font-weight: 700;
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
+    .insight-card p {
+        color: #2d3748;
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 15px;
+    }
+    .insight-card b {
+        font-weight: 700;
+    }
+    </style>
+    """
+    
+    # Inyectar estilos CSS para insights
+    st.markdown(INSIGHT_STYLE, unsafe_allow_html=True)
 
     # Cargar datos
     @st.cache_data
@@ -307,7 +348,7 @@ def mostrar_analisis_estrategico():
     """, unsafe_allow_html=True)
 
     # 1. Gráfico de Barras Apiladas mejorado: Ventas por categoría desglosado por método de pago
-   
+    st.markdown("<h2 style='text-align:center; color:#1a365d; margin-bottom:20px; font-weight:700; font-size:28px; font-family:Arial, sans-serif;'>Ventas por Categoría y Método de Pago</h2>", unsafe_allow_html=True)
     
     # Asegurarnos de que todas las categorías (incluyendo "ropa") estén en el gráfico
     # incluso si no tienen datos en los filtros actuales
@@ -369,16 +410,25 @@ def mostrar_analisis_estrategico():
     fig_barras.update_layout(
         title={
             'text': 'Distribución de Ventas por Categoría y Método de Pago',
-            'y':0.95,
-            'x':0.5,
+            'y': 0.95,
+            'x': 0.5,
             'xanchor': 'center',
             'yanchor': 'top',
-            'font': dict(size=22, color='#1a365d', family='Arial', weight='bold')
+            'font': TITLE_FONT
         },
-        xaxis_title='<b>Categoría de Producto</b>',
-        yaxis_title='<b>Ventas Totales (USD)</b>',
-        legend_title='<b>Método de Pago</b>',
-        font=dict(family="Arial", size=14),
+        xaxis_title={
+            'text': '<b>Categoría de Producto</b>',
+            'font': AXIS_TITLE_FONT
+        },
+        yaxis_title={
+            'text': '<b>Ventas Totales (USD)</b>',
+            'font': AXIS_TITLE_FONT
+        },
+        legend_title={
+            'text': '<b>Método de Pago</b>',
+            'font': LEGEND_FONT
+        },
+        font=LABEL_FONT,
         plot_bgcolor='rgba(240,249,255,0.95)',
         hoverlabel=dict(bgcolor="white", font_size=14, font_family="Arial"),
         xaxis=dict(
@@ -462,7 +512,8 @@ def mostrar_analisis_estrategico():
     """, unsafe_allow_html=True)
     
     # 2. Heatmap mejorado: Correlación entre variables clave
-
+    st.markdown("<h2 style='text-align:center; color:#1a365d; margin-bottom:20px; margin-top:40px; font-weight:700; font-size:28px; font-family:Arial, sans-serif;'>Correlación entre Variables Clave</h2>", unsafe_allow_html=True)
+    
     # Seleccionar columnas numéricas para correlación
     cols_disponibles = ['edad_cliente', 'cantidad', 'precio_unitario_usd', 'ventas', 'satisfaccion']
     
@@ -512,14 +563,14 @@ def mostrar_analisis_estrategico():
                 'x': 0.5,
                 'xanchor': 'center',
                 'yanchor': 'top',
-                'font': dict(size=22, color='#1a365d', family='Arial', weight='bold')
+                'font': TITLE_FONT
             },
             xaxis={'title': ''},
             yaxis={'title': ''},
-            font=dict(family="Arial", size=14),
+            font=LABEL_FONT,
             plot_bgcolor='rgba(240,249,255,0.95)',
             coloraxis_colorbar=dict(
-                title=dict(text="<b>Correlación</b>"), # Sin propiedades adicionales dentro de title
+                title=dict(text="<b>Correlación</b>", font=LEGEND_FONT),
                 # titlefont=dict(size=14),  # Esta línea causa el error - eliminada
                 ticks="outside",
                 tickfont=dict(size=12),
@@ -548,10 +599,14 @@ def mostrar_analisis_estrategico():
                 max_val = matriz_corr.loc[max_corr[0], max_corr[1]]
                 max_var1, max_var2 = max_corr
                 
+                # Obtener nombres legibles de las variables
+                max_var1_nombre = nombre_variables.get(max_var1, max_var1)
+                max_var2_nombre = nombre_variables.get(max_var2, max_var2)
+                
                 st.markdown(f"""
                 <div class='insight-card'>
                 <h3>Insight: Correlaciones Significativas</h3>
-                <p>La correlación más fuerte es entre <b>{max_var1}</b> y <b>{max_var2}</b> (r = {max_val:.2f}), 
+                <p>La correlación más fuerte es entre <b>{max_var1_nombre}</b> y <b>{max_var2_nombre}</b> (r = {max_val:.2f}), 
                 lo que indica que estos factores están estrechamente relacionados.</p>
                 <p>Esta información puede ser útil para estrategias de precios y marketing dirigido.</p>
                 </div>
@@ -567,6 +622,7 @@ def mostrar_analisis_estrategico():
         st.warning("No hay suficientes columnas numéricas para calcular correlaciones.")
 
     # 3. Boxplot mejorado: Comparar distribución de precios por categoría
+    st.markdown("<h2 style='text-align:center; color:#1a365d; margin-bottom:20px; margin-top:40px; font-weight:700; font-size:28px; font-family:Arial, sans-serif;'>Distribución de Precios por Categoría</h2>", unsafe_allow_html=True)
     
     # Ordenar categorías por precio mediano para mejor visualización
     cat_median = df_filtrado.groupby('categoria')['precio_unitario_usd'].median().sort_values(ascending=False)
@@ -657,11 +713,17 @@ def mostrar_analisis_estrategico():
             'x': 0.5,
             'xanchor': 'center',
             'yanchor': 'top',
-            'font': dict(size=22, color='#1a365d', family='Arial', weight='bold')
+            'font': TITLE_FONT
         },
-        xaxis_title='<b>Categoría de Producto</b>',
-        yaxis_title='<b>Precio Unitario (USD)</b>',
-        font=dict(family="Arial", size=14),
+        xaxis_title={
+            'text': '<b>Categoría de Producto</b>',
+            'font': AXIS_TITLE_FONT
+        },
+        yaxis_title={
+            'text': '<b>Precio Unitario (USD)</b>',
+            'font': AXIS_TITLE_FONT
+        },
+        font=LABEL_FONT,
         showlegend=False,
         plot_bgcolor='rgba(240,249,255,0.95)',
         xaxis={'categoryorder': 'array', 'categoryarray': cat_order_price, 'tickangle': -45},
@@ -700,7 +762,8 @@ def mostrar_analisis_estrategico():
     </div>
     """, unsafe_allow_html=True)
     
-    # 4. Gráfico de Líneas interactivo: Evolución de satisfacción
+    # 4. Gráfico de Líneas: Evolución de satisfacción
+    st.markdown("<h2 style='text-align:center; color:#1a365d; margin-bottom:20px; margin-top:40px; font-weight:700; font-size:28px; font-family:Arial, sans-serif;'>Evolución de la Satisfacción del Cliente</h2>", unsafe_allow_html=True)
     
     if 'satisfaccion' in df_filtrado.columns:
         # Calcular satisfacción promedio por mes-año
@@ -789,11 +852,17 @@ def mostrar_analisis_estrategico():
                     'x': 0.5,
                     'xanchor': 'center',
                     'yanchor': 'top',
-                    'font': dict(size=22, color='#1a365d', family='Arial', weight='bold')
+                    'font': TITLE_FONT
                 },
-                xaxis_title='<b>Período</b>',
-                yaxis_title='<b>Satisfacción Promedio (1-5)</b>',
-                font=dict(family="Arial", size=14),
+                xaxis_title={
+                    'text': '<b>Período</b>',
+                    'font': AXIS_TITLE_FONT
+                },
+                yaxis_title={
+                    'text': '<b>Satisfacción Promedio (1-5)</b>',
+                    'font': AXIS_TITLE_FONT
+                },
+                font=LABEL_FONT,
                 plot_bgcolor='rgba(240,249,255,0.95)',
                 xaxis=dict(
                     showgrid=True,
@@ -901,7 +970,8 @@ def mostrar_analisis_estrategico():
         # Eliminar advertencia y mostrar un espacio vacío
         st.write("")
 
-    # 5. Mapa Coroplético Interactivo: Ventas totales por país
+    # 5. Mapa Coroplético: Distribución geográfica
+    st.markdown("<h2 style='text-align:center; color:#1a365d; margin-bottom:20px; margin-top:40px; font-weight:700; font-size:28px; font-family:Arial, sans-serif;'>Distribución Geográfica de Ventas</h2>", unsafe_allow_html=True)
     
     ventas_pais = df_filtrado.groupby('pais')['ventas'].sum().reset_index()
     
@@ -964,28 +1034,13 @@ def mostrar_analisis_estrategico():
             'x': 0.5,
             'xanchor': 'center',
             'yanchor': 'top',
-            'font': dict(size=22, color='#1a365d', family='Arial', weight='bold')
+            'font': TITLE_FONT
         },
-        geo=dict(
-            showframe=False,
-            showcoastlines=True,
-            projection_type='natural earth',
-            landcolor='rgba(240, 240, 240, 0.8)',
-            oceancolor='rgba(230, 240, 250, 0.8)',
-            coastlinecolor='rgba(200, 200, 200, 0.8)',
-            countrycolor='rgba(200, 200, 200, 0.8)',
-            showocean=True,
-            showcountries=True,
-            bgcolor='rgba(240, 249, 255, 0.95)',
-            lonaxis=dict(range=[-150, 70]),
-            lataxis=dict(range=[-55, 85]),
-            projection_scale=1.0,
-        ),
-        font=dict(family="Arial", size=14),
+        font=LABEL_FONT,
         coloraxis_colorbar=dict(
             title=dict(
                 text="<b>Ventas (USD)</b>",
-                font=dict(size=15, color='#1a365d')
+                font=LEGEND_FONT
             ),
             tickprefix="$",
             tickformat=",",
@@ -1107,7 +1162,7 @@ def mostrar_analisis_estrategico():
             'x': 0.5,
             'xanchor': 'center',
             'yanchor': 'top',
-            'font': dict(size=22, color='#1a365d', family='Arial', weight='bold')
+            'font': TITLE_FONT
         },
         geo=dict(
             showframe=False,
@@ -1174,6 +1229,7 @@ def mostrar_analisis_estrategico():
         st.info("No hay datos suficientes de ciudades para generar insights geoespaciales detallados.")
 
     # 7. Segmentación de mercado mejorada: Visualización interactiva
+    st.markdown("<h2 style='text-align:center; color:#1a365d; margin-bottom:20px; margin-top:40px; font-weight:700; font-size:28px; font-family:Arial, sans-serif;'>Segmentación de Mercado</h2>", unsafe_allow_html=True)
     
     # Añadimos el código para una sección básica de segmentación de mercado
     if 'rango_edad' in df_filtrado.columns and 'genero_cliente' in df_filtrado.columns:
@@ -1226,24 +1282,24 @@ def mostrar_analisis_estrategico():
                     'x': 0.5,
                     'xanchor': 'center',
                     'yanchor': 'top',
-                    'font': dict(size=22, color='#1a365d', family='Arial', weight='bold')
+                    'font': TITLE_FONT
                 },
                 barmode='group',
                 bargap=0.3,  # Espacio entre grupos
                 bargroupgap=0.1,  # Espacio entre barras del mismo grupo
                 xaxis_title={
                     'text': '<b>Segmento de Edad</b>',
-                    'font': dict(size=14, family='Arial', color='#2c5282')
+                    'font': AXIS_TITLE_FONT
                 },
                 yaxis_title={
                     'text': '<b>Ventas Totales (USD)</b>',
-                    'font': dict(size=14, family='Arial', color='#2c5282')
+                    'font': AXIS_TITLE_FONT
                 },
                 legend_title={
                     'text': '<b>Género</b>',
-                    'font': dict(size=14, family='Arial', color='#2c5282')
+                    'font': LEGEND_FONT
                 },
-                font=dict(family="Arial", size=14),
+                font=LABEL_FONT,
                 plot_bgcolor='rgba(240,249,255,0.95)',
                 hoverlabel=dict(
                     bgcolor="white", 

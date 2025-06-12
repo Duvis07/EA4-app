@@ -27,13 +27,23 @@ except ImportError:
 # Importar la función desde el módulo analisis_estrategico.py
 from analisis_estrategico import mostrar_analisis_estrategico
 
-# --- CSS para diseño moderno tipo "app de turismo" ---
+# --- CSS para diseño moderno tipo "app de turismo" con pestañas más grandes ---
 st.markdown("""
 <style>
     .main {background-color: #f8f9fa;}
     .stTabs [data-baseweb="tab-list"] {gap: 24px;}
-    .stTabs [data-baseweb="tab"] {background-color: #e6f2ff; border-radius: 4px; padding: 10px 20px;}
-    .stTabs [aria-selected="true"] {background-color: #4a86e8; color: white;}
+    .stTabs [data-baseweb="tab"] {
+        background-color: #e6f2ff; 
+        border-radius: 6px; 
+        padding: 14px 24px;  /* Padding aumentado */
+        font-size: 18px;     /* Tamaño de fuente aumentado */
+        font-weight: 500;    /* Peso de fuente aumentado */
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: #4a86e8; 
+        color: white;
+        font-weight: 600;    /* Peso de fuente en pestaña activa */
+    }
     h1 {color: #1a365d; font-weight: 800; margin-bottom: 0.5em;}
     h2 {color: #2a4365; font-weight: 700;}
     h3 {color: #2c5282; font-weight: 600;}
@@ -64,19 +74,25 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# Definir constantes de estilo para mantener consistencia
+TITLE_FONT = "font-family: Arial, sans-serif; font-weight: 800; color: #1a365d;"
+HEADING_FONT = "font-family: Arial, sans-serif; font-weight: 700; color: #1a365d;"
+BODY_FONT = "font-family: Arial, sans-serif; font-weight: 400; color: #2d3748;"
+ACCENT_COLOR = "#4a86e8"
+
 # Título principal primero
 st.title("📊 Análisis de Ventas - TechNova Retail")
 
 # Banner de autores y descripción después del título
-st.markdown("""
+st.markdown(f"""
 <div style='background-color: #f9f9fc; border-radius: 8px; box-shadow: 0 2px 8px rgba(76, 110, 245, 0.05); padding: 20px 26px 14px 26px; margin-bottom: 24px;'>
-    <p style='margin:0; font-size: 20px; font-weight: bold; color: #1a365d;'>Desarrollado por: <span style='color:#2563eb;'>Duván, Daniel y Angelo</span></p>
-    <span style='font-size:15px; color:#222;'>Esta aplicación interactiva analiza los patrones de ventas en TechNova Retail para identificar tendencias clave que pueden mejorar las ofertas y estrategias de marketing de la empresa. Utiliza los filtros a continuación para personalizar el análisis según tus necesidades específicas.</span>
+    <p style='{HEADING_FONT} font-size: 20px; margin: 0;'>Desarrollado por: <span style='color:{ACCENT_COLOR};'>Duván, Daniel y Angelo</span></p>
+    <span style='{BODY_FONT} font-size: 16px; line-height: 1.6;'>Esta aplicación interactiva analiza los patrones de ventas en TechNova Retail para identificar tendencias clave que pueden mejorar las ofertas y estrategias de marketing de la empresa. Utiliza los filtros a continuación para personalizar el análisis según tus necesidades específicas.</span>
 </div>
 """, unsafe_allow_html=True)
 
-# --- Modificación: Mostrar pestañas "Caso de estudio" y "Análisis estratégico" (ocultar "Visualizaciones de ventas") ---
-tabs = st.tabs(["Caso de estudio", "Visualizaciones Análisis estratégico"])  # Cambio de nombre de la tercera pestaña
+# --- Modificación: Pestañas más grandes con texto más descriptivo ---
+tabs = st.tabs(["📚 Caso de estudio", "📊 Análisis estratégico"])  # Añadidos emojis y simplificado nombres
 
 with tabs[0]:
     if mostrar_caso_estudio:
