@@ -1302,7 +1302,8 @@ def mostrar_analisis_estrategico():
         recomendaciones.append(f"<b>Para {pais_mayor_ticket['pais']}</b>: Capitalizar el alto valor por cliente desarrollando líneas exclusivas y servicios premium adaptados a este mercado.")
     
     # Para el segundo país más importante
-    recomendaciones.append(f"<b>Para {segundo_pais['pais']}</b>: Implementar campañas específicas para incrementar su participación actual del {participacion_segundo:.1f}%, aprovechando el potencial de crecimiento.")
+    segundo_pais_nombre = 'España' if segundo_pais['pais'] == 'Spain' else segundo_pais['pais']
+    recomendaciones.append(f"<b>Para {segundo_pais_nombre}</b>: Implementar campañas específicas para incrementar su participación actual del {participacion_segundo:.1f}%, aprovechando el potencial de crecimiento.")
     
     # Análisis de satisfacción si está disponible
     satisfaccion_info = ""
@@ -1312,17 +1313,24 @@ def mostrar_analisis_estrategico():
         
         diferencia_satisfaccion = pais_mejor_satisfaccion['satisfaccion'] - pais_peor_satisfaccion['satisfaccion']
         
-        satisfaccion_info = f"""<p>El nivel de satisfacción varía considerablemente entre países, con <b>{pais_mejor_satisfaccion['pais']}</b> 
-        liderando con <b>{pais_mejor_satisfaccion['satisfaccion']:.2f}/5</b> y <b>{pais_peor_satisfaccion['pais']}</b> 
+        # Reemplazar Spain por España en el texto de satisfacción
+        pais_mejor_nombre = 'España' if pais_mejor_satisfaccion['pais'] == 'Spain' else pais_mejor_satisfaccion['pais']
+        pais_peor_nombre = 'España' if pais_peor_satisfaccion['pais'] == 'Spain' else pais_peor_satisfaccion['pais']
+        
+        satisfaccion_info = f"""<p>El nivel de satisfacción varía considerablemente entre países, con <b>{pais_mejor_nombre}</b> 
+        liderando con <b>{pais_mejor_satisfaccion['satisfaccion']:.2f}/5</b> y <b>{pais_peor_nombre}</b> 
         presentando oportunidades de mejora con <b>{pais_peor_satisfaccion['satisfaccion']:.2f}/5</b> 
         (diferencia de {diferencia_satisfaccion:.2f} puntos).</p>"""
+    
+    # Reemplazar Spain por España en el segundo mercado más importante
+    segundo_pais_texto = 'España' if segundo_pais['pais'] == 'Spain' else segundo_pais['pais']
     
     st.markdown(f"""
     <div class='insight-card'>
     <h3>Insight: Distribución Geográfica de Ventas</h3>
     <p>{comparacion_texto}</p>
     
-    <p>El segundo mercado más importante es <b>{segundo_pais['pais']}</b> con <b>${segundo_pais['ventas']:,.2f}</b> 
+    <p>El segundo mercado más importante es <b>{segundo_pais_texto}</b> con <b>${segundo_pais['ventas']:,.2f}</b> 
     en ventas totales ({participacion_segundo:.1f}% de participación) y un ticket promedio de <b>${segundo_pais['ticket_promedio']:,.2f}</b>.</p>
     
     {satisfaccion_info}
@@ -1444,6 +1452,7 @@ def mostrar_analisis_estrategico():
     st.plotly_chart(fig_geo_completo, use_container_width=True)
     
     # Insight para el mapa combinado de países y ciudades
+   
     if not ventas_ciudad.empty:
         ciudad_mas_ventas = ventas_ciudad.loc[ventas_ciudad['ventas'].idxmax()]
         
