@@ -1050,9 +1050,6 @@ def mostrar_analisis_estrategico():
             bgcolor='rgba(255,255,255,0.93)',
             bordercolor='rgba(200,210,220,0.7)',
             borderwidth=1.5,
-            x=1.22,
-            y=0.5,
-            yanchor="middle",
             outlinewidth=2,
             outlinecolor='rgba(180,180,180,0.7)',
             tickfont=dict(size=13, color='#1a365d')
@@ -1388,26 +1385,28 @@ def mostrar_analisis_estrategico():
             # Mostrar el gráfico
             st.plotly_chart(fig_segmentacion, use_container_width=True)
             
-            # Usar directamente el texto sin formatear a través de variables
+            # Actualización del insight_html con la tipografía estandarizada
             insight_html = """
-<h3 style="color: #1a365d; font-weight: 700; margin-bottom: 15px;">Insight: Segmentación de Mercado</h3>
-<p style="margin-bottom: 15px; line-height: 1.6;">
-    El segmento más valioso es <b>&gt;45, Masculino</b> con ventas totales de 
-    <b>$316,502.73</b>, representando el <b>25.2%</b> del total de ventas.
-</p>
-<p style="margin-bottom: 15px; line-height: 1.6;">
-    Este segmento supera a su contraparte de <b>Femenino</b> en la misma franja etaria por <b>$67,538.65</b> 
-    (<b>27.1%</b> más), lo que sugiere una preferencia de género marcada en este grupo de edad.
-</p>
-<div style="background-color: rgba(74, 134, 232, 0.1); padding: 15px; border-radius: 5px; margin-top: 10px;">
-    <p style="margin: 0; line-height: 1.6;">
-        <b style="color: #2c5282;">Recomendación:</b> Las estrategias de marketing y desarrollo de productos 
-        deberían orientarse prioritariamente al segmento <b>&gt;45, Masculino</b>, 
-        mientras se desarrollan campañas específicas para aumentar la penetración en el segmento 
-        <b>&gt;45, Femenino</b> que muestra potencial de crecimiento.
-    </p>
-</div>
-"""
+            <div class='insight-card'>
+            <h3>Insight: Segmentación de Mercado</h3>
+            <p>
+                El segmento más valioso es <b>&gt;45, Masculino</b> con ventas totales de 
+                <b>$316,502.73</b>, representando el <b>25.2%</b> del total de ventas.
+            </p>
+            <p>
+                Este segmento supera a su contraparte de <b>Femenino</b> en la misma franja etaria por <b>$67,538.65</b> 
+                (<b>27.1%</b> más), lo que sugiere una preferencia de género marcada en este grupo de edad.
+            </p>
+            <div style="background-color: rgba(74, 134, 232, 0.1); padding: 15px; border-radius: 5px; margin-top: 10px;">
+                <p style="margin: 0; line-height: 1.6; font-family: Arial, sans-serif; font-weight: 400; color: #2d3748; font-size: 16px;">
+                    <b style="color: #2c5282;">Recomendación:</b> Las estrategias de marketing y desarrollo de productos 
+                    deberían orientarse prioritariamente al segmento <b>&gt;45, Masculino</b>, 
+                    mientras se desarrollan campañas específicas para aumentar la penetración en el segmento 
+                    <b>&gt;45, Femenino</b> que muestra potencial de crecimiento.
+                </p>
+            </div>
+            </div>
+            """
             st.markdown(insight_html, unsafe_allow_html=True)
 
         else:
