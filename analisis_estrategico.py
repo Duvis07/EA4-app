@@ -1080,16 +1080,82 @@ def mostrar_analisis_estrategico():
                 cambio = 0
                 
             tendencia = "positiva" if cambio >= 0 else "negativa"
+            signo = "+" if cambio >= 0 else "-"
+            
+            # Analizar la tendencia reciente (últimos 3 meses si hay suficientes datos)
+            tendencia_reciente = ""
+            if len(satisfaccion_tiempo) >= 4:
+                ultimos_meses = satisfaccion_tiempo.iloc[-3:]
+                primer_reciente = ultimos_meses.iloc[0]['satisfaccion']
+                ultimo_reciente = ultimos_meses.iloc[-1]['satisfaccion']
+                
+                if primer_reciente != 0:
+                    cambio_reciente = ((ultimo_reciente - primer_reciente) / primer_reciente) * 100
+                    if (cambio_reciente >= 0) != (cambio >= 0):  # Si la tendencia reciente es diferente a la general
+                        tendencia_reciente = f"<p>Sin embargo, en los últimos 3 meses se observa una tendencia <b>{'positiva' if cambio_reciente >= 0 else 'negativa'}</b> de <b>{abs(cambio_reciente):.1f}%</b>, lo que sugiere un <b>{'cambio favorable' if cambio_reciente >= 0 else 'punto de atención'}</b>.</p>"
             
             max_satisfaccion = satisfaccion_tiempo['satisfaccion'].max()
             mes_max = satisfaccion_tiempo.loc[satisfaccion_tiempo['satisfaccion'] == max_satisfaccion, 'mes_ano'].iloc[0]
             
+            # Interpretar nivel de satisfacción
+            nivel_texto = ""
+            if max_satisfaccion >= 4.5:
+                nivel_texto = "excelente"
+            elif max_satisfaccion >= 4:
+                nivel_texto = "muy bueno"
+            elif max_satisfaccion >= 3.5:
+                nivel_texto = "bueno"
+            elif max_satisfaccion >= 3:
+                nivel_texto = "aceptable"
+            else:
+                nivel_texto = "preocupante"
+            
+            # Formatear el mes para mostrarlo de forma más legible
+            try:
+                fecha_obj = datetime.strptime(mes_max, '%Y-%m')
+                mes_formateado = fecha_obj.strftime('%B %Y').capitalize()
+            except:
+                mes_formateado = mes_max
+            
+            # Calcular meses con tendencias positivas y negativas
+            meses_tendencia = []
+            for i in range(1, len(satisfaccion_tiempo)):
+                actual = satisfaccion_tiempo.iloc[i]['satisfaccion']
+                anterior = satisfaccion_tiempo.iloc[i-1]['satisfaccion']
+                if actual > anterior:
+                    meses_tendencia.append(("positiva", satisfaccion_tiempo.iloc[i]['mes_ano']))
+                elif actual < anterior:
+                    meses_tendencia.append(("negativa", satisfaccion_tiempo.iloc[i]['mes_ano']))
+            
+            # Obtener recomendaciones basadas en los datos
+            recomendaciones = []
+            
+            if tendencia == "negativa" and abs(cambio) > 5:
+                recomendaciones.append("Realizar encuestas específicas para identificar los factores que están afectando la satisfacción")
+                recomendaciones.append("Revisar cambios recientes en productos, servicios o procesos que puedan estar impactando negativamente")
+            
+            if any(t[0] == "positiva" for t in meses_tendencia):
+                recomendaciones.append(f"Analizar las iniciativas implementadas en {', '.join([t[1] for t in meses_tendencia if t[0] == 'positiva'][:2])} para identificar prácticas exitosas")
+            
+            if max_satisfaccion < 4:
+                recomendaciones.append("Implementar un programa integral de mejora de la experiencia del cliente")
+                
+            if len(recomendaciones) < 3:
+                recomendaciones.append("Establecer un sistema de seguimiento continuo de la satisfacción para detectar cambios rápidamente")
+            
             st.markdown(f"""
             <div class='insight-card'>
             <h3>Insight: Tendencia de Satisfacción</h3>
-            <p>La satisfacción del cliente muestra una tendencia <b>{tendencia}</b> con un cambio del <b>{abs(cambio):.1f}%</b> 
-            durante el período analizado. El mes con mayor satisfacción fue <b>{mes_max}</b> con un promedio de <b>{max_satisfaccion:.2f}/5</b>.</p>
-            <p>Es recomendable analizar qué estrategias se implementaron en los períodos de mayor satisfacción para replicarlas.</p>
+            <p>La satisfacción del cliente muestra una tendencia <b>{tendencia}</b> con un cambio del <b>{signo}{abs(cambio):.1f}%</b> 
+            durante el período analizado. El mes con mayor satisfacción fue <b>{mes_formateado}</b> con un promedio de <b>{max_satisfaccion:.2f}/5</b>, 
+            nivel considerado <b>{nivel_texto}</b>.</p>
+            
+            {tendencia_reciente}
+            
+            <p><b>Recomendaciones específicas:</b></p>
+            <ul>
+                {" ".join(f"<li>{rec}</li>" for rec in recomendaciones)}
+            </ul>
             </div>
             """, unsafe_allow_html=True)
         else:
