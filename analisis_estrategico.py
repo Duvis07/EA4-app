@@ -581,12 +581,74 @@ def mostrar_analisis_estrategico():
                 max_var1_nombre = nombre_variables.get(max_var1, max_var1)
                 max_var2_nombre = nombre_variables.get(max_var2, max_var2)
                 
+                # Buscar la segunda correlación más fuerte
+                second_corr = matriz_corr.unstack().sort_values().drop_duplicates().tail(3).index[1]
+                if len(second_corr) == 2 and second_corr[0] != second_corr[1]:
+                    second_val = matriz_corr.loc[second_corr[0], second_corr[1]]
+                    second_var1, second_var2 = second_corr
+                    second_var1_nombre = nombre_variables.get(second_var1, second_var1)
+                    second_var2_nombre = nombre_variables.get(second_var2, second_var2)
+                
+                # Determinar fuerza de la correlación
+                def evaluar_correlacion(val):
+                    abs_val = abs(val)
+                    if abs_val > 0.7:
+                        return "muy fuerte"
+                    elif abs_val > 0.5:
+                        return "fuerte"
+                    elif abs_val > 0.3:
+                        return "moderada"
+                    else:
+                        return "débil"
+                
+                fuerza_corr = evaluar_correlacion(max_val)
+                
+                # Interpretación específica basada en las variables
+                interpretacion = ""
+                recomendaciones = ""
+                
+                if (max_var1 == 'precio_unitario_usd' and max_var2 == 'ventas') or (max_var2 == 'precio_unitario_usd' and max_var1 == 'ventas'):
+                    if max_val > 0:
+                        interpretacion = f"Esta correlación positiva {fuerza_corr} indica que productos con precios más altos generan mayores ingresos, sugiriendo que nuestros clientes valoran la calidad y exclusividad sobre el precio económico."
+                        recomendaciones = "<li>Considerar estrategias de <b>premium pricing</b> para maximizar ingresos</li><li>Enfatizar el valor y calidad en la comunicación de marketing</li><li>Evaluar oportunidades para introducir productos de gama alta</li>"
+                    else:
+                        interpretacion = f"Esta correlación negativa {fuerza_corr} sugiere que los precios más bajos impulsan mayor volumen de ventas, indicando sensibilidad al precio en nuestro mercado."
+                        recomendaciones = "<li>Implementar estrategias de precios competitivos</li><li>Considerar promociones y descuentos tácticos</li><li>Optimizar costos para mantener márgenes con precios más bajos</li>"
+                
+                elif (max_var1 == 'satisfaccion' and max_var2 == 'ventas') or (max_var2 == 'satisfaccion' and max_var1 == 'ventas'):
+                    if max_val > 0:
+                        interpretacion = f"La correlación positiva {fuerza_corr} entre satisfacción y ventas confirma que clientes más satisfechos generan mayor valor para el negocio, posiblemente a través de compras repetidas y mayor fidelidad."
+                        recomendaciones = "<li>Invertir en mejorar la experiencia del cliente</li><li>Implementar programas de fidelización</li><li>Realizar seguimiento post-venta para aumentar la satisfacción</li>"
+                    else:
+                        interpretacion = f"La correlación negativa {fuerza_corr} entre satisfacción y ventas es inusual y puede indicar que estamos vendiendo más pero generando experiencias negativas, un riesgo para la sostenibilidad del negocio."
+                        recomendaciones = "<li>Revisar urgentemente procesos de atención al cliente</li><li>Investigar causas de insatisfacción en productos de alto volumen</li><li>Equilibrar objetivos de ventas con métricas de satisfacción</li>"
+                
+                elif (max_var1 == 'edad_cliente' and max_var2 in ['ventas', 'precio_unitario_usd']) or (max_var2 == 'edad_cliente' and max_var1 in ['ventas', 'precio_unitario_usd']):
+                    otra_var = max_var2 if max_var1 == 'edad_cliente' else max_var1
+                    otra_var_nombre = nombre_variables.get(otra_var, otra_var)
+                    
+                    if max_val > 0:
+                        interpretacion = f"La correlación positiva {fuerza_corr} entre edad y {otra_var_nombre.lower()} sugiere que los clientes de mayor edad tienden a generar {otra_var_nombre.lower()} más altos, posiblemente debido a mayor poder adquisitivo o preferencias de producto diferentes."
+                        recomendaciones = "<li>Segmentar ofertas por grupos de edad</li><li>Desarrollar productos premium para el segmento de mayor edad</li><li>Ajustar la comunicación de marketing para resonar con diferentes generaciones</li>"
+                    else:
+                        interpretacion = f"La correlación negativa {fuerza_corr} entre edad y {otra_var_nombre.lower()} indica que los clientes más jóvenes tienden a generar {otra_var_nombre.lower()} más altos, contrario a la suposición común sobre poder adquisitivo."
+                        recomendaciones = "<li>Investigar preferencias específicas del segmento joven</li><li>Revisar estrategia de precios para diferentes segmentos etarios</li><li>Desarrollar campañas específicas para maximizar valor en segmentos de mayor edad</li>"
+                
+                # Insight final más completo
                 st.markdown(f"""
                 <div class='insight-card'>
                 <h3>Insight: Correlaciones Significativas</h3>
                 <p>La correlación más fuerte es entre <b>{max_var1_nombre}</b> y <b>{max_var2_nombre}</b> (r = {max_val:.2f}), 
-                lo que indica que estos factores están estrechamente relacionados.</p>
-                <p>Esta información puede ser útil para estrategias de precios y marketing dirigido.</p>
+                lo que representa una relación <b>{fuerza_corr}</b> entre estas variables.</p>
+                
+                <p>{interpretacion}</p>
+                
+                {f"<p>También destaca la correlación entre <b>{second_var1_nombre}</b> y <b>{second_var2_nombre}</b> (r = {second_val:.2f}), que podría proporcionar insights adicionales para la toma de decisiones.</p>" if 'second_val' in locals() else ""}
+                
+                <p><b>Implicaciones para el negocio:</b></p>
+                <ul>
+                    {recomendaciones if recomendaciones else "<li>Utilizar esta correlación para refinar estrategias de precios</li><li>Segmentar campañas de marketing basadas en esta relación</li><li>Monitorear estas variables clave para predecir tendencias de ventas</li>"}
+                </ul>
                 </div>
                 """, unsafe_allow_html=True)
         except (IndexError, KeyError):
@@ -1021,6 +1083,7 @@ def mostrar_analisis_estrategico():
     # Calcular ticket promedio
     metricas_pais['ticket_promedio'] = metricas_pais['ventas'] / metricas_pais['id_cliente']
 
+
     
     # Crear mapa coroplético interactivo mejorado
     fig_mapa = px.choropleth(
@@ -1422,30 +1485,90 @@ def mostrar_analisis_estrategico():
             # Mostrar el gráfico
             st.plotly_chart(fig_segmentacion, use_container_width=True)
             
-            # Actualización del insight_html con la tipografía estandarizada
-            insight_html = """
-            <div class='insight-card'>
-            <h3>Insight: Segmentación de Mercado</h3>
-            <p>
-                El segmento más valioso es <b>&gt;45, Masculino</b> con ventas totales de 
-                <b>$316,502.73</b>, representando el <b>25.2%</b> del total de ventas.
-            </p>
-            <p>
-                Este segmento supera a su contraparte de <b>Femenino</b> en la misma franja etaria por <b>$67,538.65</b> 
-                (<b>27.1%</b> más), lo que sugiere una preferencia de género marcada en este grupo de edad.
-            </p>
-            <div style="background-color: rgba(74, 134, 232, 0.1); padding: 15px; border-radius: 5px; margin-top: 10px;">
-                <p style="margin: 0; line-height: 1.6; font-family: Arial, sans-serif; font-weight: 400; color: #2d3748; font-size: 16px;">
-                    <b style="color: #2c5282;">Recomendación:</b> Las estrategias de marketing y desarrollo de productos 
-                    deberían orientarse prioritariamente al segmento <b>&gt;45, Masculino</b>, 
-                    mientras se desarrollan campañas específicas para aumentar la penetración en el segmento 
-                    <b>&gt;45, Femenino</b> que muestra potencial de crecimiento.
+            # Identificar el segmento más valioso y hacer cálculos adicionales
+            segmento_mas_valioso = segmentacion.loc[segmentacion['ventas'].idxmax()]
+            segmento_opuesto = segmentacion[(segmentacion['rango_edad'] == segmento_mas_valioso['rango_edad']) & 
+                                         (segmentacion['genero_cliente'] != segmento_mas_valioso['genero_cliente'])]
+            
+            if not segmento_opuesto.empty:
+                diferencia_valor = segmento_mas_valioso['ventas'] - segmento_opuesto['ventas'].values[0]
+                diferencia_porcentaje = (diferencia_valor / segmento_opuesto['ventas'].values[0]) * 100
+                
+                # Cálculo de ticket promedio por segmento si es posible
+                if 'id_cliente' in df_filtrado.columns:
+                    ticket_por_segmento = df_filtrado.groupby(['rango_edad', 'genero_cliente']).agg({
+                        'ventas': 'sum',
+                        'id_cliente': 'nunique'
+                    })
+                    ticket_por_segmento['ticket_promedio'] = ticket_por_segmento['ventas'] / ticket_por_segmento['id_cliente']
+                    
+                    ticket_segmento_valioso = ticket_por_segmento.loc[(segmento_mas_valioso['rango_edad'], segmento_mas_valioso['genero_cliente']), 'ticket_promedio']
+                    ticket_info = f"<p>El ticket promedio de este segmento es <b>${ticket_segmento_valioso:.2f}</b>, lo que indica un alto poder adquisitivo.</p>"
+                else:
+                    ticket_info = ""
+                
+                # Obtener edades exactas para una mejor interpretación
+                if segmento_mas_valioso['rango_edad'] == '<30':
+                    rango_edad_texto = "menores de 30 años"
+                elif segmento_mas_valioso['rango_edad'] == '30-45':
+                    rango_edad_texto = "entre 30 y 45 años"
+                else:  # >45
+                    rango_edad_texto = "mayores de 45 años"
+                
+                # Personalizar género para el texto
+                genero_texto = "masculino" if segmento_mas_valioso['genero_cliente'].lower() in ['masculino', 'm', 'male', 'hombre'] else "femenino"
+                genero_opuesto = "femenino" if genero_texto == "masculino" else "masculino"
+                
+                # Análisis de categorías preferidas por este segmento
+                categorias_segmento = df_filtrado[
+                    (df_filtrado['rango_edad'] == segmento_mas_valioso['rango_edad']) & 
+                    (df_filtrado['genero_cliente'] == segmento_mas_valioso['genero_cliente'])
+                ].groupby('categoria')['ventas'].sum().sort_values(ascending=False)
+                
+                if not categorias_segmento.empty:
+                    top_categorias = categorias_segmento.head(2).index.tolist()
+                    categorias_texto = f"<p>Las categorías preferidas por este segmento son <b>{top_categorias[0].title()}</b>"
+                    if len(top_categorias) > 1:
+                        categorias_texto += f" y <b>{top_categorias[1].title()}</b>"
+                    categorias_texto += ".</p>"
+                else:
+                    categorias_texto = ""
+                
+                # Crear insight HTML mejorado con formato estandarizado y más información
+                insight_html = f"""
+                <div class='insight-card'>
+                <h3>Insight: Segmentación de Mercado</h3>
+                <p>
+                    El segmento más valioso son los clientes <b>{genero_texto}</b> <b>{rango_edad_texto}</b>, con ventas totales de 
+                    <b>${segmento_mas_valioso['ventas']:,.2f}</b>, representando el <b>{segmento_mas_valioso['porcentaje']}%</b> del total de ventas.
                 </p>
-            </div>
-            </div>
-            """
+                
+                <p>
+                    Este segmento supera a su contraparte de <b>{genero_opuesto}</b> en la misma franja etaria por <b>${diferencia_valor:,.2f}</b> 
+                    (<b>{diferencia_porcentaje:.1f}%</b> más), lo que sugiere una preferencia de género marcada en este grupo de edad.
+                </p>
+                
+                {categorias_texto}
+                {ticket_info}
+                
+                <p><b>Recomendaciones estratégicas:</b></p>
+                <ul style="margin-top: 5px; padding-left: 20px;">
+                    <li>Priorizar las estrategias de marketing y desarrollo de productos hacia el segmento <b>{genero_texto}</b> <b>{rango_edad_texto}</b>.</li>
+                    <li>Desarrollar campañas específicas para aumentar la penetración en el segmento <b>{genero_opuesto}</b> <b>{rango_edad_texto}</b>, que muestra potencial de crecimiento.</li>
+                    <li>Realizar investigación de mercado para entender mejor las preferencias de compra específicas del segmento demográfico dominante.</li>
+                    <li>Considerar programas de fidelización especiales para retener a los clientes del segmento más valioso.</li>
+                </ul>
+                </div>
+                """
+            else:
+                insight_html = """
+                <div class='insight-card'>
+                <h3>Insight: Segmentación de Mercado</h3>
+                <p>No hay suficientes datos para comparar segmentos por género dentro del mismo rango de edad.</p>
+                </div>
+                """
+            
             st.markdown(insight_html, unsafe_allow_html=True)
-
         else:
             st.info("No hay datos suficientes para crear la segmentación de mercado.")
     else:
