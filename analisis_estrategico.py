@@ -679,7 +679,6 @@ def mostrar_analisis_estrategico():
                 
                 <p>{interpretacion}</p>
                 
-                {f"<p>También destaca la correlación entre <b>{second_var1_nombre}</b> y <b>{second_var2_nombre}</b> (r = {second_val:.2f}), que podría proporcionar insights adicionales para la toma de decisiones.</p>" if 'second_val' in locals() else ""}
                 
                 <p><b>Implicaciones para el negocio:</b></p>
                 <ul>
@@ -1262,14 +1261,77 @@ def mostrar_analisis_estrategico():
     pais_mas_ventas = metricas_pais.loc[metricas_pais['ventas'].idxmax()]
     pais_mayor_ticket = metricas_pais.loc[metricas_pais['ticket_promedio'].idxmax()]
     
+    # Calcular totales y participación de mercado
+    total_ventas = metricas_pais['ventas'].sum()
+    total_clientes = metricas_pais['id_cliente'].sum()
+    participacion_principal = (pais_mas_ventas['ventas'] / total_ventas) * 100
+    
+    # Obtener datos del segundo país más importante
+    segundo_pais = metricas_pais.nlargest(2, 'ventas').iloc[1]
+    participacion_segundo = (segundo_pais['ventas'] / total_ventas) * 100
+    
+    # Comparar el ticket promedio del país principal con el promedio general
+    ticket_promedio_general = total_ventas / total_clientes
+    diferencia_ticket = ((pais_mayor_ticket['ticket_promedio'] / ticket_promedio_general) - 1) * 100
+    
+    # Generar texto de comparación más informativo
+    if pais_mas_ventas['pais'] == pais_mayor_ticket['pais']:
+        comparacion_texto = f"<b>{pais_mas_ventas['pais']}</b> lidera tanto en volumen de ventas con <b>${pais_mas_ventas['ventas']:,.2f}</b> ({participacion_principal:.1f}% del total) " + \
+                          f"como en ticket promedio con <b>${pais_mas_ventas['ticket_promedio']:,.2f}</b> por cliente, " + \
+                          f"un {diferencia_ticket:.1f}% superior al promedio general de ${ticket_promedio_general:.2f}."
+    else:
+        comparacion_texto = f"El país con mayor volumen de ventas es <b>{pais_mas_ventas['pais']}</b> con <b>${pais_mas_ventas['ventas']:,.2f}</b> " + \
+                          f"({participacion_principal:.1f}% del total). Sin embargo, <b>{pais_mayor_ticket['pais']}</b> destaca con el mayor ticket promedio " + \
+                          f"de <b>${pais_mayor_ticket['ticket_promedio']:,.2f}</b> por cliente, un {diferencia_ticket:.1f}% superior al promedio general."
+    
+    # Calcular densidad de ventas (ventas por cantidad de clientes en cada país)
+    metricas_pais['densidad_ventas'] = metricas_pais['ventas'] / metricas_pais['id_cliente']
+    pais_mayor_densidad = metricas_pais.loc[metricas_pais['densidad_ventas'].idxmax()]
+    
+    # Generar recomendaciones específicas según los datos
+    recomendaciones = []
+    
+    # Para el país con mayor volumen
+    if participacion_principal > 50:
+        recomendaciones.append(f"<b>Para {pais_mas_ventas['pais']}</b>: Fortalecer la posición dominante mediante programas de fidelización avanzados y expandir la gama de productos premium.")
+    else:
+        recomendaciones.append(f"<b>Para {pais_mas_ventas['pais']}</b>: Profundizar penetración de mercado con estrategias de cross-selling y up-selling para incrementar el ticket promedio.")
+    
+    # Para el país con mayor ticket promedio (si es diferente)
+    if pais_mas_ventas['pais'] != pais_mayor_ticket['pais']:
+        recomendaciones.append(f"<b>Para {pais_mayor_ticket['pais']}</b>: Capitalizar el alto valor por cliente desarrollando líneas exclusivas y servicios premium adaptados a este mercado.")
+    
+    # Para el segundo país más importante
+    recomendaciones.append(f"<b>Para {segundo_pais['pais']}</b>: Implementar campañas específicas para incrementar su participación actual del {participacion_segundo:.1f}%, aprovechando el potencial de crecimiento.")
+    
+    # Análisis de satisfacción si está disponible
+    satisfaccion_info = ""
+    if 'satisfaccion' in metricas_pais.columns:
+        pais_mejor_satisfaccion = metricas_pais.loc[metricas_pais['satisfaccion'].idxmax()]
+        pais_peor_satisfaccion = metricas_pais.loc[metricas_pais['satisfaccion'].idxmin()]
+        
+        diferencia_satisfaccion = pais_mejor_satisfaccion['satisfaccion'] - pais_peor_satisfaccion['satisfaccion']
+        
+        satisfaccion_info = f"""<p>El nivel de satisfacción varía considerablemente entre países, con <b>{pais_mejor_satisfaccion['pais']}</b> 
+        liderando con <b>{pais_mejor_satisfaccion['satisfaccion']:.2f}/5</b> y <b>{pais_peor_satisfaccion['pais']}</b> 
+        presentando oportunidades de mejora con <b>{pais_peor_satisfaccion['satisfaccion']:.2f}/5</b> 
+        (diferencia de {diferencia_satisfaccion:.2f} puntos).</p>"""
+    
     st.markdown(f"""
     <div class='insight-card'>
     <h3>Insight: Distribución Geográfica de Ventas</h3>
-    <p>El país con mayor volumen de ventas es <b>{pais_mas_ventas['pais']}</b> con <b>${pais_mas_ventas['ventas']:,.2f}</b> 
-    en ventas totales. Sin embargo, <b>{pais_mayor_ticket['pais']}</b> destaca con el mayor ticket promedio 
-    de <b>${pais_mayor_ticket['ticket_promedio']:,.2f}</b> por cliente.</p>
-    <p>Esta información sugiere oportunidades de expansión en mercados de alto valor y estrategias diferenciadas por país 
-    considerando el poder adquisitivo y comportamiento de compra local.</p>
+    <p>{comparacion_texto}</p>
+    
+    <p>El segundo mercado más importante es <b>{segundo_pais['pais']}</b> con <b>${segundo_pais['ventas']:,.2f}</b> 
+    en ventas totales ({participacion_segundo:.1f}% de participación) y un ticket promedio de <b>${segundo_pais['ticket_promedio']:,.2f}</b>.</p>
+    
+    {satisfaccion_info}
+    
+    <p><b>Recomendaciones estratégicas por país:</b></p>
+    <ul>
+        {" ".join(f"<li>{rec}</li>" for rec in recomendaciones)}
+        <li><b>Mercados emergentes</b>: Evaluar la expansión hacia nuevos territorios basándose en similitudes culturales y económicas con los mercados exitosos actuales.</li>
+    </ul>
     </div>
     """, unsafe_allow_html=True)
 
@@ -1658,7 +1720,6 @@ def mostrar_analisis_estrategico():
                     <li>Priorizar las estrategias de marketing y desarrollo de productos hacia el segmento <b>{genero_texto}</b> <b>{rango_edad_texto}</b>.</li>
                     <li>Desarrollar campañas específicas para aumentar la penetración en el segmento <b>{genero_opuesto}</b> <b>{rango_edad_texto}</b>, que muestra potencial de crecimiento.</li>
                     <li>Realizar investigación de mercado para entender mejor las preferencias de compra específicas del segmento demográfico dominante.</li>
-                    <li>Considerar programas de fidelización especiales para retener a los clientes del segmento más valioso.</li>
                 </ul>
                 </div>
                 """
