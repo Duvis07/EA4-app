@@ -1266,9 +1266,20 @@ def mostrar_analisis_estrategico():
     total_clientes = metricas_pais['id_cliente'].sum()
     participacion_principal = (pais_mas_ventas['ventas'] / total_ventas) * 100
     
-    # Obtener datos del segundo país más importante
-    segundo_pais = metricas_pais.nlargest(2, 'ventas').iloc[1]
-    participacion_segundo = (segundo_pais['ventas'] / total_ventas) * 100
+    # Reemplazar la parte que intenta obtener el segundo país más importante
+    # Código actual problemático:
+    # segundo_pais = metricas_pais.nlargest(2, 'ventas').iloc[1]
+    # participacion_segundo = (segundo_pais['ventas'] / total_ventas) * 100
+    
+    # Reemplazo con manejo de excepciones:
+    if len(metricas_pais) > 1:
+        # Si hay más de un país, continúa como antes
+        segundo_pais = metricas_pais.nlargest(2, 'ventas').iloc[1]
+        participacion_segundo = (segundo_pais['ventas'] / total_ventas) * 100
+    else:
+        # Si solo hay un país, usa el mismo país como "segundo"
+        segundo_pais = pais_mas_ventas.copy()
+        participacion_segundo = 0  # O cualquier valor predeterminado que tenga sentido
     
     # Comparar el ticket promedio del país principal con el promedio general
     ticket_promedio_general = total_ventas / total_clientes
