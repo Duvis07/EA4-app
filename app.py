@@ -27,27 +27,81 @@ except ImportError:
 # Importar la función desde el módulo analisis_estrategico.py
 from analisis_estrategico import mostrar_analisis_estrategico
 
-# --- CSS para diseño moderno tipo "app de turismo" con pestañas más grandes ---
+# --- CSS para diseño moderno tipo "app de turismo" con pestañas más profesionales ---
 st.markdown("""
 <style>
     .main {background-color: #f8f9fa;}
-    .stTabs [data-baseweb="tab-list"] {gap: 24px;}
+    
+    /* Mejora en el espaciado y diseño de las pestañas */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+        background-color: #f0f6ff;
+        padding: 10px 10px 0 10px;
+        border-radius: 12px 12px 0 0;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Estilo mejorado para las pestañas individuales */
     .stTabs [data-baseweb="tab"] {
         background-color: #e6f2ff; 
-        border-radius: 6px; 
-        padding: 14px 24px  /* Padding aumentado */
-        font-size: 18px;     /* Tamaño de fuente aumentado */
-        font-weight: 500;    /* Peso de fuente aumentado */
+        border-radius: 10px 10px 0 0; 
+        padding: 14px 24px;  /* Corregido: añadido punto y coma */
+        font-size: 18px;
+        font-weight: 500;
+        font-family: Arial, sans-serif;
+        border-bottom: 2px solid transparent;
+        transition: all 0.3s ease;
     }
+    
+    /* Estilo mejorado para la pestaña activa */
     .stTabs [aria-selected="true"] {
         background-color: #4a86e8; 
         color: white;
-        font-weight: 600;    /* Peso de fuente en pestaña activa */
+        font-weight: 600;
+        font-family: Arial, sans-serif;
+        border-bottom: 2px solid #1a56db;
+        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+        transform: translateY(-4px);
     }
-    h1 {color: #1a365d; font-weight: 800; margin-bottom: 0.5em;}
-    h2 {color: #2a4365; font-weight: 700;}
-    h3 {color: #2c5282; font-weight: 600;}
-    .stMarkdown {line-height: 1.8;}
+    
+    /* Hover effect para las pestañas */
+    .stTabs [data-baseweb="tab"]:hover:not([aria-selected="true"]) {
+        background-color: #d0e3fc;
+        border-bottom: 2px solid #90b4f9;
+        cursor: pointer;
+    }
+    
+    /* Contenedor de pestañas con borde mejorado */
+    .stTabs [data-baseweb="tab-panel"] {
+        background-color: white;
+        border-radius: 0 0 12px 12px;
+        padding: 20px;
+        border: 1px solid #e2e8f0;
+        border-top: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Resto de tus estilos existentes */
+    h1 {
+        color: #1a365d; 
+        font-weight: 800; 
+        margin-bottom: 0.5em;
+        font-family: Arial, sans-serif;
+    }
+    h2 {
+        color: #2a4365; 
+        font-weight: 700;
+        font-family: Arial, sans-serif;
+    }
+    h3 {
+        color: #2c5282; 
+        font-weight: 600;
+        font-family: Arial, sans-serif;
+    }
+    .stMarkdown {
+        line-height: 1.8;
+        font-family: Arial, sans-serif;
+    }
     div.block-container {padding-top: 2rem;}
     .insight-card {
         background-color: white;
@@ -56,6 +110,7 @@ st.markdown("""
         margin-bottom: 20px;
         border-left: 5px solid #4a86e8;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        font-family: Arial, sans-serif;
     }
     .metric-container {
         background-color: white;
@@ -63,6 +118,7 @@ st.markdown("""
         padding: 15px;
         margin: 10px 0;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        font-family: Arial, sans-serif;
     }
     .footer {
         background-color: #f8f9fa;
@@ -70,10 +126,161 @@ st.markdown("""
         border-radius: 8px;
         margin-top: 30px;
         border-top: 2px solid #e2e8f0;
+        font-family: Arial, sans-serif;
     }
 
-    /* Asegurar que el título principal use Arial */
-    .main h1 {
+    /* Asegurar que todos los elementos usen Arial */
+    .main h1, .main h2, .main h3, .main p, .main span, .main div, .stText {
+        font-family: Arial, sans-serif !important;
+    }
+    
+    /* Asegurar que los widgets de Streamlit también usen Arial */
+    .stMarkdown, .stButton, .stSelectbox, .stRadio, .stCheckbox, .stSlider, .stText, .stDateInput {
+        font-family: Arial, sans-serif !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# CSS mejorado para pestañas más profesionales y con mejor contraste
+st.markdown("""
+<style>
+    .main {background-color: #f8f9fa;}
+    
+    /* Mejora en el espaciado y diseño de las pestañas */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 10px;
+        background-color: #eaf0f9;
+        padding: 15px 15px 0 15px;
+        border-radius: 12px 12px 0 0;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+        border-bottom: 1px solid #d0d9e6;
+    }
+    
+    /* Estilo mejorado para las pestañas individuales con mejor contraste */
+    .stTabs [data-baseweb="tab"] {
+        background-color: #d0e0f7; 
+        border-radius: 10px 10px 0 0; 
+        padding: 16px 28px;
+        font-size: 17px;
+        font-weight: 600;
+        font-family: Arial, sans-serif;
+        color: #2c5282;
+        border-bottom: 2px solid transparent;
+        transition: all 0.3s ease;
+        box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.05);
+        border: 1px solid #c0d0e9;
+        border-bottom: none;
+        min-width: 160px;
+        text-align: center;
+    }
+    
+    /* Estilo mejorado para la pestaña activa con mayor contraste */
+    .stTabs [aria-selected="true"] {
+        background-color: #4a86e8; 
+        color: white;
+        font-weight: 700;
+        font-family: Arial, sans-serif;
+        border: 1px solid #3a76d8;
+        border-bottom: none;
+        box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+        transform: translateY(-5px);
+        position: relative;
+        z-index: 10;
+        text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Pestaña activa con indicador en la parte inferior */
+    .stTabs [aria-selected="true"]::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background-color: #4a86e8;
+        border-radius: 0 0 4px 4px;
+    }
+    
+    /* Hover effect para las pestañas con mejor feedback visual */
+    .stTabs [data-baseweb="tab"]:hover:not([aria-selected="true"]) {
+        background-color: #e2ecf9;
+        border: 1px solid #a0c0e9;
+        border-bottom: none;
+        transform: translateY(-2px);
+        cursor: pointer;
+        color: #1a4b91;
+    }
+    
+    /* Contenedor de pestañas con borde mejorado */
+    .stTabs [data-baseweb="tab-panel"] {
+        background-color: white;
+        border-radius: 0 0 12px 12px;
+        padding: 25px;
+        border: 1px solid #d0d9e6;
+        border-top: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        position: relative;
+        top: -1px;
+    }
+
+    /* Iconos de pestañas con mejor posición y tamaño */
+    .stTabs [data-baseweb="tab"] span {
+        display: inline-block;
+        margin-right: 8px;
+        font-size: 18px;
+        vertical-align: middle;
+    }
+
+    /* Resto de tus estilos existentes */
+    h1 {
+        color: #1a365d; 
+        font-weight: 800; 
+        margin-bottom: 0.5em;
+        font-family: Arial, sans-serif;
+    }
+    h2 {
+        color: #2a4365; 
+        font-weight: 700;
+        font-family: Arial, sans-serif;
+    }
+    h3 {
+        color: #2c5282; 
+        font-weight: 600;
+        font-family: Arial, sans-serif;
+    }
+    .stMarkdown {
+        line-height: 1.8;
+        font-family: Arial, sans-serif;
+    }
+    div.block-container {padding-top: 2rem;}
+    .insight-card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-left: 5px solid #4a86e8;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        font-family: Arial, sans-serif;
+    }
+    .metric-container {
+        background-color: white;
+        border-radius: 8px;
+        padding: 15px;
+        margin: 10px 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        font-family: Arial, sans-serif;
+    }
+    .footer {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 30px;
+        border-top: 2px solid #e2e8f0;
+        font-family: Arial, sans-serif;
+    }
+
+    /* Asegurar que todos los elementos usen Arial */
+    .main h1, .main h2, .main h3, .main p, .main span, .main div, .stText {
         font-family: Arial, sans-serif !important;
     }
     
@@ -85,7 +292,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Definir constantes de estilo para mantener consistencia
-TITLE_FONT = "font-family: Arial, sans-serif; font-weight: 800; color: #1a365d;"
 HEADING_FONT = "font-family: Arial, sans-serif; font-weight: 700; color: #1a365d;"
 BODY_FONT = "font-family: Arial, sans-serif; font-weight: 400; color: #2d3748;"
 ACCENT_COLOR = "#4a86e8"
@@ -102,7 +308,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # --- Modificación: Pestañas más grandes con texto más descriptivo ---
-tabs = st.tabs(["📚 Caso de estudio", "📊 Análisis estratégico"])  # Añadidos emojis y simplificado nombres
+tabs = st.tabs(["📚 **Caso de estudio**", "📊 **Análisis estratégico**"])  # Añadidos emojis y simplificado nombres
 
 with tabs[0]:
     if mostrar_caso_estudio:
